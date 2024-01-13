@@ -1032,12 +1032,11 @@ static int mqtt_connect_with_results(mqtt_client_t* c)
 exit:
     if (rc == MQTT_SUCCESS_ERROR) {
         if(NULL == c->mqtt_thread) {
-
+            mqtt_set_client_state(c, CLIENT_STATE_CONNECTED);
             /* connect success, and need init mqtt thread */
             c->mqtt_thread= platform_thread_init("mqtt_yield_thread", mqtt_yield_thread, c, MQTT_THREAD_STACK_SIZE, MQTT_THREAD_PRIO, MQTT_THREAD_TICK);
 
             if (NULL != c->mqtt_thread) {
-                mqtt_set_client_state(c, CLIENT_STATE_CONNECTED);
                 platform_thread_startup(c->mqtt_thread);
                 platform_thread_start(c->mqtt_thread);       /* start run mqtt thread */
             } else {
