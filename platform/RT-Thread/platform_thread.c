@@ -28,14 +28,14 @@ platform_thread_t *platform_thread_init( const char *name,
     thread->thread = rt_thread_create((const char *)name,
         entry, param,
         stack_size, priority, tick);
-    
+
     if (thread->thread == RT_NULL)
     {
-        return RT_NULL;    
+        return RT_NULL;
     }
     else
     {
-        return thread;    
+        return thread;
     }
 
 }
@@ -49,7 +49,6 @@ void platform_thread_startup(platform_thread_t* thread)
 void platform_thread_stop(platform_thread_t* thread)
 {
     rt_thread_suspend(thread->thread);
-    
 }
 
 void platform_thread_start(platform_thread_t* thread)
@@ -59,7 +58,9 @@ void platform_thread_start(platform_thread_t* thread)
 
 void platform_thread_destroy(platform_thread_t* thread)
 {
-    platform_memory_free(thread);
+    if (thread) {
+        rt_thread_t thread_handle = thread->thread;
+        platform_memory_free(thread);
+        rt_thread_delete(thread_handle);
+    }
 }
-
-
