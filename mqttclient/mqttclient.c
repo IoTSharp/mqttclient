@@ -425,7 +425,7 @@ static message_handlers_t *mqtt_msg_handler_create(const char* topic_filter, mqt
 {
     message_handlers_t *msg_handler = NULL;
 
-    msg_handler = (message_handlers_t *) platform_memory_alloc(sizeof(message_handlers_t));
+    msg_handler = (message_handlers_t *) platform_memory_alloc(sizeof(message_handlers_t) + strlen(topic_filter) + 1);
     if (NULL == msg_handler)
         return NULL;
 
@@ -433,7 +433,8 @@ static message_handlers_t *mqtt_msg_handler_create(const char* topic_filter, mqt
 
     msg_handler->qos = qos;
     msg_handler->handler = handler;     /* register  callback handler */
-    msg_handler->topic_filter = topic_filter;
+    msg_handler->topic_filter = (char *)msg_handler + sizeof(message_handlers_t);
+    strcpy(msg_handler->topic_filter, topic_filter);
 
     return msg_handler;
 }

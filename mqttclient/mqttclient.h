@@ -69,7 +69,7 @@ typedef void (*reconnect_handler_t)(void* client, void* reconnect_date);
 typedef struct message_handlers {
     mqtt_list_t         list;
     mqtt_qos_t          qos;
-    const char*         topic_filter;
+    char                *topic_filter;
     message_handler_t   handler;
 } message_handlers_t;
 
