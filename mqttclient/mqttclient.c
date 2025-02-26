@@ -956,6 +956,7 @@ exit:
     thread_to_be_destoried = c->mqtt_thread;
     if(NULL != thread_to_be_destoried)
     {
+        c->mqtt_thread = NULL;
         platform_thread_destroy(thread_to_be_destoried);
         thread_to_be_destoried = NULL;
     }
