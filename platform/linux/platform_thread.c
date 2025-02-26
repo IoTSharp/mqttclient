@@ -21,7 +21,7 @@ platform_thread_t *platform_thread_init( const char *name,
 
     thread_entry = (void *(*)(void*))entry;
     thread = platform_memory_alloc(sizeof(platform_thread_t));
-    
+
     res = pthread_create(&thread->thread, NULL, thread_entry, param);
     if(res != 0) {
         platform_memory_free(thread);
@@ -47,7 +47,7 @@ void platform_thread_stop(platform_thread_t* thread)
 
 void platform_thread_start(platform_thread_t* thread)
 {
-    pthread_mutex_lock(&(thread->mutex)); 
+    pthread_mutex_lock(&(thread->mutex));
     pthread_cond_signal(&(thread->cond));
     pthread_mutex_unlock(&(thread->mutex));
 }
@@ -59,5 +59,3 @@ void platform_thread_destroy(platform_thread_t* thread)
         platform_memory_free(thread);
     }
 }
-
-

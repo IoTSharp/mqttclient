@@ -25,6 +25,3 @@ void platform_memory_free(void *ptr)
 {
     rt_free(ptr);
 }
-
-
-

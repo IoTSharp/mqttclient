@@ -7,12 +7,12 @@
  */
 #include "mqttclient.h"
 
-#define     MQTT_MIN_PAYLOAD_SIZE   2               
+#define     MQTT_MIN_PAYLOAD_SIZE   2
 #define     MQTT_MAX_PAYLOAD_SIZE   268435455       // MQTT imposes a maximum payload size of 268435455 bytes.
 
 static void default_msg_handler(void* client, message_data_t* msg)
 {
-    MQTT_LOG_I("%s:%d %s()...\ntopic: %s, qos: %d, \nmessage:%s", __FILE__, __LINE__, __FUNCTION__, 
+    MQTT_LOG_I("%s:%d %s()...\ntopic: %s, qos: %d, \nmessage:%s", __FILE__, __LINE__, __FUNCTION__,
             msg->topic_name, msg->message->qos, (char*)msg->message->payload);
 }
 
@@ -54,7 +54,7 @@ static int mqtt_set_publish_dup(mqtt_client_t* c, uint8_t dup)
 
     if (header.bits.type != PUBLISH)
         RETURN_ERROR(MQTT_SET_PUBLISH_DUP_FAILED_ERROR);
-    
+
     header.bits.dup = dup;
     writeChar(&write_data, header.byte); /* write header */
 
@@ -80,15 +80,15 @@ static int mqtt_subtract_ack_handler_num(mqtt_client_t* c)
     if (c->mqtt_ack_handler_number <= 0) {
         goto exit;
     }
-    
+
     c->mqtt_ack_handler_number--;
-    
+
 exit:
     platform_mutex_unlock(&c->mqtt_global_lock);
     RETURN_ERROR(rc);
 }
 
-static uint16_t mqtt_get_next_packet_id(mqtt_client_t *c) 
+static uint16_t mqtt_get_next_packet_id(mqtt_client_t *c)
 {
     platform_mutex_lock(&c->mqtt_global_lock);
     c->mqtt_packet_id = (c->mqtt_packet_id == MQTT_MAX_PACKET_ID) ? 1 : c->mqtt_packet_id + 1;
@@ -150,7 +150,7 @@ static int mqtt_read_packet(mqtt_client_t* c, int* packet_type, platform_timer_t
     int rc;
     int len = 1;
     int remain_len = 0;
-    
+
     if (NULL == packet_type)
         RETURN_ERROR(MQTT_NULL_VALUE_ERROR);
 
@@ -166,10 +166,10 @@ static int mqtt_read_packet(mqtt_client_t* c, int* packet_type, platform_timer_t
     mqtt_decode_packet(c, &remain_len, platform_timer_remain(timer));
 
     /* put the original remaining length back into the buffer */
-    len += MQTTPacket_encode(c->mqtt_read_buf + len, remain_len); 
+    len += MQTTPacket_encode(c->mqtt_read_buf + len, remain_len);
 
     if ((len + remain_len) > c->mqtt_read_buf_size) {
-        
+
         /* mqtt buffer is too short, read and discard all corrupted data */
         mqtt_packet_drain(c, timer, remain_len);
 
@@ -182,8 +182,8 @@ static int mqtt_read_packet(mqtt_client_t* c, int* packet_type, platform_timer_t
 
     header.byte = c->mqtt_read_buf[0];
     *packet_type = header.bits.type;
-    
-    platform_timer_cutdown(&c->mqtt_last_received, (c->mqtt_keep_alive_interval * 1000)); 
+
+    platform_timer_cutdown(&c->mqtt_last_received, (c->mqtt_keep_alive_interval * 1000));
 
     RETURN_ERROR(MQTT_SUCCESS_ERROR);
 }
@@ -208,14 +208,14 @@ static int mqtt_send_packet(mqtt_client_t* c, int length, platform_timer_t* time
         platform_timer_cutdown(&c->mqtt_last_sent, (c->mqtt_keep_alive_interval * 1000));
         RETURN_ERROR(MQTT_SUCCESS_ERROR);
     }
-    
+
     RETURN_ERROR(MQTT_SEND_PACKET_ERROR);
 }
 
 static int mqtt_is_topic_equals(const char *topic_filter, const char *topic)
 {
     int topic_len = 0;
-    
+
     topic_len = strlen(topic);
     if (strlen(topic_filter) != topic_len) {
         return 0;
@@ -238,11 +238,11 @@ static char mqtt_topic_is_matched(char* topic_filter, MQTTString* topic_name)
     {
         if (*curn == '/' && *curf != '/')
             break;
-        
+
         /* support wildcards for MQTT topics, such as '#' '+' */
-        if (*curf != '+' && *curf != '#' && *curf != *curn) 
+        if (*curf != '+' && *curf != '#' && *curf != *curn)
             break;
-        
+
         if (*curf == '+') {
             char* nextpos = curn + 1;
             while (nextpos < curn_end && *nextpos != '/')
@@ -276,7 +276,7 @@ static message_handlers_t *mqtt_get_msg_handler(mqtt_client_t* c, MQTTString* to
         msg_handler = LIST_ENTRY(curr, message_handlers_t, list);
 
         /* judge topic is equal or match, support wildcard, such as '#' '+' */
-        if ((NULL != msg_handler->topic_filter) && ((MQTTPacket_equals(topic_name, (char*)msg_handler->topic_filter)) || 
+        if ((NULL != msg_handler->topic_filter) && ((MQTTPacket_equals(topic_name, (char*)msg_handler->topic_filter)) ||
             (mqtt_topic_is_matched((char*)msg_handler->topic_filter, topic_name)))) {
                 return msg_handler;
             }
@@ -288,10 +288,10 @@ static int mqtt_deliver_message(mqtt_client_t* c, MQTTString* topic_name, mqtt_m
 {
     int rc = MQTT_FAILED_ERROR;
     message_handlers_t *msg_handler;
-    
+
     /* get mqtt message handler */
     msg_handler = mqtt_get_msg_handler(c, topic_name);
-    
+
     if (NULL != msg_handler) {
         message_data_t md;
         mqtt_new_message_data(&md, topic_name, message);    /* make a message data */
@@ -303,7 +303,7 @@ static int mqtt_deliver_message(mqtt_client_t* c, MQTTString* topic_name, mqtt_m
         c->mqtt_interceptor_handler(c, &md);
         rc = MQTT_SUCCESS_ERROR;
     }
-    
+
     memset(message->payload, 0, strlen(message->payload));
     memset(topic_name->lenstring.data, 0, topic_name->lenstring.len);
 
@@ -328,12 +328,12 @@ static ack_handlers_t *mqtt_ack_handler_create(mqtt_client_t* c, int type, uint1
     ack_handler->payload = (uint8_t *)ack_handler + sizeof(ack_handlers_t);
     ack_handler->handler = handler;
     memcpy(ack_handler->payload, c->mqtt_write_buf, payload_len);    /* save the data in ack handler*/
-    
+
     return ack_handler;
 }
 
 static void mqtt_ack_handler_destroy(ack_handlers_t* ack_handler)
-{ 
+{
     if (NULL != &ack_handler->list) {
         mqtt_list_del(&ack_handler->list);
         platform_memory_free(ack_handler);  /* delete ack handler from the list, and free memory */
@@ -341,7 +341,7 @@ static void mqtt_ack_handler_destroy(ack_handlers_t* ack_handler)
 }
 
 static void mqtt_ack_handler_resend(mqtt_client_t* c, ack_handlers_t* ack_handler)
-{ 
+{
     platform_timer_t timer;
     platform_timer_init(&timer);
     platform_timer_cutdown(&timer, c->mqtt_cmd_timeout);
@@ -349,7 +349,7 @@ static void mqtt_ack_handler_resend(mqtt_client_t* c, ack_handlers_t* ack_handle
 
     platform_mutex_lock(&c->mqtt_write_lock);
     memcpy(c->mqtt_write_buf, ack_handler->payload, ack_handler->payload_len);   /* copy data to write buf form ack handler */
-    
+
     mqtt_send_packet(c, ack_handler->payload_len, &timer);      /* resend data */
     platform_mutex_unlock(&c->mqtt_write_lock);
     MQTT_LOG_W("%s:%d %s()... resend %d package, packet_id is %d ", __FILE__, __LINE__, __FUNCTION__, ack_handler->type, ack_handler->packet_id);
@@ -368,10 +368,10 @@ static int mqtt_ack_list_node_is_exist(mqtt_client_t* c, int type, uint16_t pack
 
          /* For mqtt packets of qos1 and qos2, you can use the packet id and type as the unique
             identifier to determine whether the node already exists and avoid repeated addition. */
-        if ((packet_id  == ack_handler->packet_id) && (type == ack_handler->type))     
+        if ((packet_id  == ack_handler->packet_id) && (type == ack_handler->type))
             return 1;
     }
-    
+
     return 0;
 }
 
@@ -379,7 +379,7 @@ static int mqtt_ack_list_record(mqtt_client_t* c, int type, uint16_t packet_id, 
 {
     int rc = MQTT_SUCCESS_ERROR;
     ack_handlers_t *ack_handler = NULL;
-    
+
     /* Determine if the node already exists */
     if (mqtt_ack_list_node_is_exist(c, type, packet_id))
         RETURN_ERROR(MQTT_ACK_NODE_IS_EXIST_ERROR);
@@ -412,7 +412,7 @@ static int mqtt_ack_list_unrecord(mqtt_client_t* c, int type, uint16_t packet_id
 
         if (handler)
             *handler = ack_handler->handler;
-        
+
         /* destroy a ack handler node */
         mqtt_ack_handler_destroy(ack_handler);
         mqtt_subtract_ack_handler_num(c);
@@ -428,9 +428,9 @@ static message_handlers_t *mqtt_msg_handler_create(const char* topic_filter, mqt
     msg_handler = (message_handlers_t *) platform_memory_alloc(sizeof(message_handlers_t));
     if (NULL == msg_handler)
         return NULL;
-    
+
     mqtt_list_init(&msg_handler->list);
-    
+
     msg_handler->qos = qos;
     msg_handler->handler = handler;     /* register  callback handler */
     msg_handler->topic_filter = topic_filter;
@@ -459,12 +459,12 @@ static int mqtt_msg_handler_is_exist(mqtt_client_t* c, message_handlers_t *handl
 
         /* determine whether a node already exists by mqtt topic, but wildcards are not supported */
         if ((NULL != msg_handler->topic_filter) && (mqtt_is_topic_equals(msg_handler->topic_filter, handler->topic_filter))) {
-            MQTT_LOG_W("%s:%d %s()...msg_handler->topic_filter: %s, handler->topic_filter: %s", 
+            MQTT_LOG_W("%s:%d %s()...msg_handler->topic_filter: %s, handler->topic_filter: %s",
                         __FILE__, __LINE__, __FUNCTION__, msg_handler->topic_filter, handler->topic_filter);
             return 1;
         }
     }
-    
+
     return 0;
 }
 
@@ -472,7 +472,7 @@ static int mqtt_msg_handlers_install(mqtt_client_t* c, message_handlers_t *handl
 {
     if ((NULL == c) || (NULL == handler))
         RETURN_ERROR(MQTT_NULL_VALUE_ERROR);
-    
+
     if (mqtt_msg_handler_is_exist(c, handler)) {
         mqtt_msg_handler_destory(handler);
         RETURN_ERROR(MQTT_SUCCESS_ERROR);
@@ -490,7 +490,7 @@ static void mqtt_clean_session(mqtt_client_t* c)
     mqtt_list_t *curr, *next;
     ack_handlers_t *ack_handler;
     message_handlers_t *msg_handler;
-    
+
     /* release all ack_handler_list memory */
     if (!(mqtt_list_is_empty(&c->mqtt_ack_handler_list))) {
         LIST_FOR_EACH_SAFE(curr, next, &c->mqtt_ack_handler_list) {
@@ -539,17 +539,17 @@ static void mqtt_ack_list_scan(mqtt_client_t* c, uint8_t flag)
 
     LIST_FOR_EACH_SAFE(curr, next, &c->mqtt_ack_handler_list) {
         ack_handler = LIST_ENTRY(curr, ack_handlers_t, list);
-        
+
         if ((!platform_timer_is_expired(&ack_handler->timer)) && (flag == 1))
             continue;
-        
+
         if ((ack_handler->type ==  PUBACK) || (ack_handler->type ==  PUBREC) || (ack_handler->type ==  PUBREL) || (ack_handler->type ==  PUBCOMP)) {
-            
+
             /* timeout has occurred. for qos1 and qos2 packets, you need to resend them. */
             mqtt_ack_handler_resend(c, ack_handler);
             continue;
         } else if ((ack_handler->type == SUBACK) || (ack_handler->type == UNSUBACK)) {
-            
+
             /*@lchnu, 2020-10-08, destory handler memory, if suback/unsuback is overdue!*/
             if (NULL != ack_handler->handler) {
                 mqtt_msg_handler_destory(ack_handler->handler);
@@ -569,12 +569,12 @@ static int mqtt_try_resubscribe(mqtt_client_t* c)
     message_handlers_t *msg_handler;
 
     MQTT_LOG_W("%s:%d %s()... mqtt try resubscribe ...", __FILE__, __LINE__, __FUNCTION__);
-    
+
     if (mqtt_list_is_empty(&c->mqtt_msg_handler_list)) {
         // MQTT_LOG_D("%s:%d %s() mqtt_msg_handler_list is empty", __FILE__, __LINE__, __FUNCTION__);
         RETURN_ERROR(MQTT_SUCCESS_ERROR);
     }
-    
+
     LIST_FOR_EACH_SAFE(curr, next, &c->mqtt_msg_handler_list) {
         msg_handler = LIST_ENTRY(curr, message_handlers_t, list);
 
@@ -593,7 +593,7 @@ static int mqtt_try_do_reconnect(mqtt_client_t* c)
 
     if (CLIENT_STATE_CONNECTED != mqtt_get_client_state(c))
         rc = mqtt_connect(c);       /* reconnect */
-    
+
     if (MQTT_SUCCESS_ERROR == rc) {
         rc = mqtt_try_resubscribe(c);   /* resubscribe */
         /* process these ack messages immediately after reconnecting */
@@ -601,7 +601,7 @@ static int mqtt_try_do_reconnect(mqtt_client_t* c)
     }
 
     MQTT_LOG_D("%s:%d %s()... mqtt try connect result is -0x%04x", __FILE__, __LINE__, __FUNCTION__, -rc);
-    
+
     RETURN_ERROR(rc);
 }
 
@@ -618,10 +618,10 @@ static int mqtt_try_reconnect(mqtt_client_t* c)
 
     if(MQTT_SUCCESS_ERROR != rc) {
         /*connect fail must delay reconnect try duration time and let cpu time go out, the lowest priority task can run */
-        mqtt_sleep_ms(c->mqtt_reconnect_try_duration);  
-        RETURN_ERROR(MQTT_RECONNECT_TIMEOUT_ERROR);    
+        mqtt_sleep_ms(c->mqtt_reconnect_try_duration);
+        RETURN_ERROR(MQTT_RECONNECT_TIMEOUT_ERROR);
     }
-    
+
     RETURN_ERROR(rc);
 }
 
@@ -642,11 +642,11 @@ static int mqtt_publish_ack_packet(mqtt_client_t *c, uint16_t packet_id, int pac
             if (MQTT_SUCCESS_ERROR != rc)
                 goto exit;
             break;
-            
+
         case PUBREL:
             len = MQTTSerialize_ack(c->mqtt_write_buf, c->mqtt_write_buf_size, PUBCOMP, 0, packet_id); /* make a PUBCOMP ack packet */
             break;
-            
+
         default:
             rc = MQTT_PUBLISH_ACK_TYPE_ERROR;
             goto exit;
@@ -677,7 +677,7 @@ static int mqtt_puback_and_pubcomp_packet_handle(mqtt_client_t *c, platform_time
 
     if (MQTTDeserialize_ack(&packet_type, &dup, &packet_id, c->mqtt_read_buf, c->mqtt_read_buf_size) != 1)
         rc = MQTT_PUBREC_PACKET_ERROR;
-    
+
     (void) dup;
     rc = mqtt_ack_list_unrecord(c, packet_type, packet_id, NULL);   /* unrecord ack handler */
 
@@ -698,24 +698,24 @@ static int mqtt_suback_packet_handle(mqtt_client_t *c, platform_timer_t *timer)
         RETURN_ERROR(rc);
 
     /* deserialize subscribe ack packet */
-    if (MQTTDeserialize_suback(&packet_id, 1, &count, (int*)&granted_qos, c->mqtt_read_buf, c->mqtt_read_buf_size) != 1) 
+    if (MQTTDeserialize_suback(&packet_id, 1, &count, (int*)&granted_qos, c->mqtt_read_buf, c->mqtt_read_buf_size) != 1)
         RETURN_ERROR(MQTT_SUBSCRIBE_ACK_PACKET_ERROR);
 
     is_nack = (granted_qos == SUBFAIL);
-    
+
     rc = mqtt_ack_list_unrecord(c, SUBACK, packet_id, &msg_handler);
-    
+
     if (!msg_handler)
         RETURN_ERROR(MQTT_MEM_NOT_ENOUGH_ERROR);
-    
+
     if (is_nack) {
         mqtt_msg_handler_destory(msg_handler);  /* subscribe topic failed, destory message handler */
         MQTT_LOG_D("subscribe topic failed...");
         RETURN_ERROR(MQTT_SUBSCRIBE_NOT_ACK_ERROR);
     }
-    
+
     rc = mqtt_msg_handlers_install(c, msg_handler);
-    
+
     RETURN_ERROR(rc);
 }
 
@@ -724,7 +724,7 @@ static int mqtt_unsuback_packet_handle(mqtt_client_t *c, platform_timer_t *timer
     int rc = MQTT_FAILED_ERROR;
     message_handlers_t *msg_handler;
     uint16_t packet_id = 0;
-    
+
     rc = mqtt_is_connected(c);
     if (MQTT_SUCCESS_ERROR != rc)
         RETURN_ERROR(rc);
@@ -733,10 +733,10 @@ static int mqtt_unsuback_packet_handle(mqtt_client_t *c, platform_timer_t *timer
         RETURN_ERROR(MQTT_UNSUBSCRIBE_ACK_PACKET_ERROR);
 
     rc = mqtt_ack_list_unrecord(c, UNSUBACK, packet_id, &msg_handler);  /* unrecord ack handler, and get message handler */
-    
+
     if (!msg_handler)
         RETURN_ERROR(MQTT_MEM_NOT_ENOUGH_ERROR);
-    
+
     mqtt_msg_handler_destory(msg_handler);  /* destory message handler */
 
     RETURN_ERROR(rc);
@@ -748,8 +748,8 @@ static int mqtt_publish_packet_handle(mqtt_client_t *c, platform_timer_t *timer)
     MQTTString topic_name;
     mqtt_message_t msg;
     int qos;
-    msg.payloadlen = 0; 
-    
+    msg.payloadlen = 0;
+
     rc = mqtt_is_connected(c);
     if (MQTT_SUCCESS_ERROR != rc)
         RETURN_ERROR(rc);
@@ -757,13 +757,13 @@ static int mqtt_publish_packet_handle(mqtt_client_t *c, platform_timer_t *timer)
     if (MQTTDeserialize_publish(&msg.dup, &qos, &msg.retained, &msg.id, &topic_name,
         (uint8_t**)&msg.payload, (int*)&msg.payloadlen, c->mqtt_read_buf, c->mqtt_read_buf_size) != 1)
         RETURN_ERROR(MQTT_PUBLISH_PACKET_ERROR);
-    
+
     msg.qos = (mqtt_qos_t)qos;
 
     /* for qos1 and qos2, you need to send a ack packet */
     if (msg.qos != QOS0) {
         platform_mutex_lock(&c->mqtt_write_lock);
-        
+
         if (msg.qos == QOS1)
             len = MQTTSerialize_ack(c->mqtt_write_buf, c->mqtt_write_buf_size, PUBACK, 0, msg.id);
         else if (msg.qos == QOS2)
@@ -773,7 +773,7 @@ static int mqtt_publish_packet_handle(mqtt_client_t *c, platform_timer_t *timer)
             rc = MQTT_SERIALIZE_PUBLISH_ACK_PACKET_ERROR;
         else
             rc = mqtt_send_packet(c, len, timer);
-        
+
         platform_mutex_unlock(&c->mqtt_write_lock);
     }
 
@@ -787,7 +787,7 @@ static int mqtt_publish_packet_handle(mqtt_client_t *c, platform_timer_t *timer)
         if ((rc = mqtt_ack_list_record(c, PUBREL, msg.id, len, NULL)) != MQTT_ACK_NODE_IS_EXIST_ERROR)
             mqtt_deliver_message(c, &topic_name, &msg);
     }
-    
+
     RETURN_ERROR(rc);
 }
 
@@ -797,7 +797,7 @@ static int mqtt_pubrec_and_pubrel_packet_handle(mqtt_client_t *c, platform_timer
     int rc = MQTT_FAILED_ERROR;
     uint16_t packet_id;
     uint8_t dup, packet_type;
-    
+
     rc = mqtt_is_connected(c);
     if (MQTT_SUCCESS_ERROR != rc)
         RETURN_ERROR(rc);
@@ -816,7 +816,7 @@ static int mqtt_packet_handle(mqtt_client_t* c, platform_timer_t* timer)
 {
     int rc = MQTT_SUCCESS_ERROR;
     int packet_type = 0;
-    
+
     rc = mqtt_read_packet(c, &packet_type, timer);
 
     switch (packet_type) {
@@ -838,7 +838,7 @@ static int mqtt_packet_handle(mqtt_client_t* c, platform_timer_t* timer)
         case SUBACK:
             rc = mqtt_suback_packet_handle(c, timer);
             break;
-            
+
         case UNSUBACK:
             rc = mqtt_unsuback_packet_handle(c, timer);
             break;
@@ -875,7 +875,7 @@ static int mqtt_wait_packet(mqtt_client_t* c, int packet_type, platform_timer_t*
 
     do {
         if (platform_timer_is_expired(timer))
-            break; 
+            break;
         rc = mqtt_packet_handle(c, timer);
     } while (rc != packet_type && rc >= 0);
 
@@ -896,7 +896,7 @@ static int mqtt_yield(mqtt_client_t* c, int timeout_ms)
 
     platform_timer_init(&timer);
     platform_timer_cutdown(&timer, timeout_ms);
-    
+
     while (!platform_timer_is_expired(&timer)) {
         state = mqtt_get_client_state(c);
         if (CLIENT_STATE_CLEAN_SESSION ==  state) {
@@ -909,7 +909,7 @@ static int mqtt_yield(mqtt_client_t* c, int timeout_ms)
                 RETURN_ERROR(rc);
             continue;
         }
-        
+
         /* mqtt connected, handle mqtt packet */
         rc = mqtt_packet_handle(c, &timer);
 
@@ -933,7 +933,7 @@ static void mqtt_yield_thread(void *arg)
     client_state_t state;
     mqtt_client_t *c = (mqtt_client_t *)arg;
     platform_thread_t *thread_to_be_destoried = NULL;
-    
+
     state = mqtt_get_client_state(c);
         if (CLIENT_STATE_CONNECTED !=  state) {
             MQTT_LOG_W("%s:%d %s()..., mqtt is not connected to the server...",  __FILE__, __LINE__, __FUNCTION__);
@@ -951,7 +951,7 @@ static void mqtt_yield_thread(void *arg)
             MQTT_LOG_W("%s:%d %s()..., mqtt reconnect timeout....", __FILE__, __LINE__, __FUNCTION__);
         }
     }
-    
+
 exit:
     thread_to_be_destoried = c->mqtt_thread;
     if(NULL != thread_to_be_destoried)
@@ -986,9 +986,9 @@ static int mqtt_connect_with_results(mqtt_client_t* c)
         if (NULL != c->mqtt_network) {
             network_release(c->mqtt_network);
             RETURN_ERROR(rc);
-        }  
+        }
     }
-    
+
     MQTT_LOG_I("%s:%d %s()... mqtt connect success...", __FILE__, __LINE__, __FUNCTION__);
 
     connect_data.keepAliveInterval = c->mqtt_keep_alive_interval;
@@ -1005,7 +1005,7 @@ static int mqtt_connect_with_results(mqtt_client_t* c)
         connect_data.will.retained = c->mqtt_will_options->will_retained;
         connect_data.will.topicName.cstring = c->mqtt_will_options->will_topic;
     }
-    
+
     platform_timer_cutdown(&c->mqtt_last_received, (c->mqtt_keep_alive_interval * 1000));
 
     platform_mutex_lock(&c->mqtt_write_lock);
@@ -1013,7 +1013,7 @@ static int mqtt_connect_with_results(mqtt_client_t* c)
     /* serialize connect packet */
     if ((len = MQTTSerialize_connect(c->mqtt_write_buf, c->mqtt_write_buf_size, &connect_data)) <= 0)
         goto exit;
-        
+
     platform_timer_cutdown(&connect_timer, c->mqtt_cmd_timeout);
 
     /* send connect packet */
@@ -1043,7 +1043,7 @@ exit:
                 /*creat the thread fail and disconnect the mqtt socket connect*/
                 network_release(c->mqtt_network);
                 rc = MQTT_CONNECT_FAILED_ERROR;
-                MQTT_LOG_W("%s:%d %s()... mqtt yield thread creat failed...", __FILE__, __LINE__, __FUNCTION__);    
+                MQTT_LOG_W("%s:%d %s()... mqtt yield thread creat failed...", __FILE__, __LINE__, __FUNCTION__);
             }
         } else {
             mqtt_set_client_state(c, CLIENT_STATE_CONNECTED);   /* reconnect, mqtt thread is already exists */
@@ -1055,7 +1055,7 @@ exit:
         network_release(c->mqtt_network);
         mqtt_set_client_state(c, CLIENT_STATE_INITIALIZED); /* connect failed */
     }
-    
+
     platform_mutex_unlock(&c->mqtt_write_lock);
 
     RETURN_ERROR(rc);
@@ -1064,18 +1064,18 @@ exit:
 static uint32_t mqtt_read_buf_malloc(mqtt_client_t* c, uint32_t size)
 {
     MQTT_ROBUSTNESS_CHECK(c, 0);
-    
+
     if (NULL != c->mqtt_read_buf)
         platform_memory_free(c->mqtt_read_buf);
-    
+
     c->mqtt_read_buf_size = size;
 
     /* limit the size of the read buffer */
     if ((MQTT_MIN_PAYLOAD_SIZE >= c->mqtt_read_buf_size) || (MQTT_MAX_PAYLOAD_SIZE <= c->mqtt_read_buf_size))
         c->mqtt_read_buf_size = MQTT_DEFAULT_BUF_SIZE;
-    
+
     c->mqtt_read_buf = (uint8_t*) platform_memory_alloc(c->mqtt_read_buf_size);
-    
+
     if (NULL == c->mqtt_read_buf) {
         MQTT_LOG_E("%s:%d %s()... malloc read buf failed...", __FILE__, __LINE__, __FUNCTION__);
         RETURN_ERROR(MQTT_MEM_NOT_ENOUGH_ERROR);
@@ -1086,18 +1086,18 @@ static uint32_t mqtt_read_buf_malloc(mqtt_client_t* c, uint32_t size)
 static uint32_t mqtt_write_buf_malloc(mqtt_client_t* c, uint32_t size)
 {
     MQTT_ROBUSTNESS_CHECK(c, 0);
-    
+
     if (NULL != c->mqtt_write_buf)
         platform_memory_free(c->mqtt_write_buf);
-    
+
     c->mqtt_write_buf_size = size;
 
     /* limit the size of the read buffer */
     if ((MQTT_MIN_PAYLOAD_SIZE >= c->mqtt_write_buf_size) || (MQTT_MAX_PAYLOAD_SIZE <= c->mqtt_write_buf_size))
         c->mqtt_write_buf_size = MQTT_DEFAULT_BUF_SIZE;
-    
+
     c->mqtt_write_buf = (uint8_t*) platform_memory_alloc(c->mqtt_write_buf_size);
-    
+
     if (NULL == c->mqtt_write_buf) {
         MQTT_LOG_E("%s:%d %s()... malloc write buf failed...", __FILE__, __LINE__, __FUNCTION__);
         RETURN_ERROR(MQTT_MEM_NOT_ENOUGH_ERROR);
@@ -1121,7 +1121,7 @@ static int mqtt_init(mqtt_client_t* c)
     c->mqtt_will_flag = 0;
     c->mqtt_cmd_timeout = MQTT_DEFAULT_CMD_TIMEOUT;
     c->mqtt_client_state = CLIENT_STATE_INITIALIZED;
-    
+
     c->mqtt_ping_outstanding = 0;
     c->mqtt_ack_handler_number = 0;
     c->mqtt_client_id_len = 0;
@@ -1135,13 +1135,13 @@ static int mqtt_init(mqtt_client_t* c)
     c->mqtt_reconnect_data = NULL;
     c->mqtt_reconnect_handler = NULL;
     c->mqtt_interceptor_handler = NULL;
-    
+
     mqtt_read_buf_malloc(c, MQTT_DEFAULT_BUF_SIZE);
     mqtt_write_buf_malloc(c, MQTT_DEFAULT_BUF_SIZE);
 
     mqtt_list_init(&c->mqtt_msg_handler_list);
     mqtt_list_init(&c->mqtt_ack_handler_list);
-    
+
     platform_mutex_init(&c->mqtt_write_lock);
     platform_mutex_init(&c->mqtt_global_lock);
 
@@ -1169,13 +1169,13 @@ MQTT_CLIENT_SET_DEFINE(reconnect_try_duration, uint32_t, 0)
 MQTT_CLIENT_SET_DEFINE(reconnect_handler, reconnect_handler_t, NULL)
 MQTT_CLIENT_SET_DEFINE(interceptor_handler, interceptor_handler_t, NULL)
 
-uint32_t mqtt_set_read_buf_size(mqtt_client_t *c, uint32_t size) 
-{ 
+uint32_t mqtt_set_read_buf_size(mqtt_client_t *c, uint32_t size)
+{
     return mqtt_read_buf_malloc(c, size);
 }
 
-uint32_t mqtt_set_write_buf_size(mqtt_client_t *c, uint32_t size) 
-{ 
+uint32_t mqtt_set_write_buf_size(mqtt_client_t *c, uint32_t size)
+{
     return mqtt_write_buf_malloc(c, size);
 }
 
@@ -1187,7 +1187,7 @@ void mqtt_sleep_ms(int ms)
 int mqtt_keep_alive(mqtt_client_t* c)
 {
     int rc = MQTT_SUCCESS_ERROR;
-    
+
     rc = mqtt_is_connected(c);
     if (MQTT_SUCCESS_ERROR != rc)
         RETURN_ERROR(rc);
@@ -1197,7 +1197,7 @@ int mqtt_keep_alive(mqtt_client_t* c)
             MQTT_LOG_W("%s:%d %s()... ping outstanding", __FILE__, __LINE__, __FUNCTION__);
             /*must realse the socket file descriptor zhaoshimin 20200629*/
             network_release(c->mqtt_network);
-            
+
             mqtt_set_client_state(c, CLIENT_STATE_DISCONNECTED);
             rc = MQTT_NOT_CONNECT_ERROR; /* PINGRESP not received in keepalive interval */
         } else {
@@ -1226,7 +1226,7 @@ mqtt_client_t *mqtt_lease(void)
     rc = mqtt_init(c);
     if (MQTT_SUCCESS_ERROR != rc)
         return NULL;
-    
+
     return c;
 }
 
@@ -1239,16 +1239,16 @@ int mqtt_release(mqtt_client_t* c)
 
     platform_timer_init(&timer);
     platform_timer_cutdown(&timer, c->mqtt_cmd_timeout);
-    
+
     /* wait for the clean session to complete */
     while ((CLIENT_STATE_INVALID != mqtt_get_client_state(c))) {
         // platform_timer_usleep(1000);            // 1ms avoid compiler optimization.
         if (platform_timer_is_expired(&timer)) {
             MQTT_LOG_E("%s:%d %s()... mqtt release failed...", __FILE__, __LINE__, __FUNCTION__);
             RETURN_ERROR(MQTT_FAILED_ERROR)
-        }    
+        }
     }
-    
+
     if (NULL != c->mqtt_network) {
         platform_memory_free(c->mqtt_network);
         c->mqtt_network = NULL;
@@ -1297,7 +1297,7 @@ int mqtt_disconnect(mqtt_client_t* c)
     platform_mutex_unlock(&c->mqtt_write_lock);
 
     mqtt_set_client_state(c, CLIENT_STATE_CLEAN_SESSION);
-    
+
     RETURN_ERROR(rc);
 }
 
@@ -1314,7 +1314,7 @@ int mqtt_subscribe(mqtt_client_t* c, const char* topic_filter, mqtt_qos_t qos, m
 
     if (CLIENT_STATE_CONNECTED != mqtt_get_client_state(c))
         RETURN_ERROR(MQTT_NOT_CONNECT_ERROR);
-    
+
     platform_mutex_lock(&c->mqtt_write_lock);
 
     packet_id = mqtt_get_next_packet_id(c);
@@ -1323,9 +1323,9 @@ int mqtt_subscribe(mqtt_client_t* c, const char* topic_filter, mqtt_qos_t qos, m
     len = MQTTSerialize_subscribe(c->mqtt_write_buf, c->mqtt_write_buf_size, 0, packet_id, 1, &topic, (int *)&qos_level);
     if (len <= 0)
         goto exit;
-    
+
     if ((rc = mqtt_send_packet(c, len, &timer)) != MQTT_SUCCESS_ERROR)
-        goto exit; 
+        goto exit;
 
     if (NULL == handler)
         handler = default_msg_handler;  /* if handler is not specified, the default handler is used */
@@ -1358,16 +1358,16 @@ int mqtt_unsubscribe(mqtt_client_t* c, const char* topic_filter)
 
     if (CLIENT_STATE_CONNECTED != mqtt_get_client_state(c))
         RETURN_ERROR(MQTT_NOT_CONNECT_ERROR);
-    
+
     platform_mutex_lock(&c->mqtt_write_lock);
 
     packet_id = mqtt_get_next_packet_id(c);
-    
+
     /* serialize unsubscribe packet and send it */
     if ((len = MQTTSerialize_unsubscribe(c->mqtt_write_buf, c->mqtt_write_buf_size, 0, packet_id, 1, &topic)) <= 0)
         goto exit;
     if ((rc = mqtt_send_packet(c, len, &timer)) != MQTT_SUCCESS_ERROR)
-        goto exit; 
+        goto exit;
 
     /* get a already subscribed message handler */
     msg_handler = mqtt_get_msg_handler(c, &topic);
@@ -1396,7 +1396,7 @@ int mqtt_publish(mqtt_client_t* c, const char* topic_filter, mqtt_message_t* msg
     if (CLIENT_STATE_CONNECTED != mqtt_get_client_state(c)) {
         msg->payloadlen = 0;        // clear
         rc = MQTT_NOT_CONNECT_ERROR;
-        RETURN_ERROR(rc);              
+        RETURN_ERROR(rc);
         // goto exit;  /* 100ask */
     }
 
@@ -1417,29 +1417,29 @@ int mqtt_publish(mqtt_client_t* c, const char* topic_filter, mqtt_message_t* msg
         }
         msg->id = mqtt_get_next_packet_id(c);
     }
-    
+
     /* serialize publish packet and send it */
     len = MQTTSerialize_publish(c->mqtt_write_buf, c->mqtt_write_buf_size, 0, msg->qos, msg->retained, msg->id,
               topic, (uint8_t*)msg->payload, msg->payloadlen);
     if (len <= 0)
         goto exit;
-    
+
     if ((rc = mqtt_send_packet(c, len, &timer)) != MQTT_SUCCESS_ERROR)
         goto exit;
-    
+
     if (QOS0 != msg->qos) {
         mqtt_set_publish_dup(c, 1);  /* may resend this data, set the dup flag in advance */
-        
+
         if (QOS1 == msg->qos) {
             /* expect to receive PUBACK, otherwise data will be resent */
-            rc = mqtt_ack_list_record(c, PUBACK, msg->id, len, NULL);  
-            
+            rc = mqtt_ack_list_record(c, PUBACK, msg->id, len, NULL);
+
         } else if (QOS2 == msg->qos) {
             /* expect to receive PUBREC, otherwise data will be resent */
-            rc = mqtt_ack_list_record(c, PUBREC, msg->id, len, NULL);   
+            rc = mqtt_ack_list_record(c, PUBREC, msg->id, len, NULL);
         }
     }
-    
+
 exit:
     msg->payloadlen = 0;        // clear
 
@@ -1450,12 +1450,12 @@ exit:
 
         /*must realse the socket file descriptor zhaoshimin 20200629*/
         network_release(c->mqtt_network);
-        
+
         /* record too much retransmitted data, may be disconnected, need to reconnect */
         mqtt_set_client_state(c, CLIENT_STATE_DISCONNECTED);
     }
 
-    RETURN_ERROR(rc);     
+    RETURN_ERROR(rc);
 }
 
 
@@ -1466,7 +1466,7 @@ int mqtt_list_subscribe_topic(mqtt_client_t* c)
     (void) i; /* prevent compiler warning */
     mqtt_list_t *curr, *next;
     message_handlers_t *msg_handler;
-    
+
     if (NULL == c)
         RETURN_ERROR(MQTT_NULL_VALUE_ERROR);
 
@@ -1480,7 +1480,7 @@ int mqtt_list_subscribe_topic(mqtt_client_t* c)
             MQTT_LOG_I("%s:%d %s()...[%d] subscribe topic: %s", __FILE__, __LINE__, __FUNCTION__, ++i ,msg_handler->topic_filter);
         }
     }
-    
+
     RETURN_ERROR(MQTT_SUCCESS_ERROR);
 }
 

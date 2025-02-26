@@ -20,16 +20,16 @@ platform_thread_t *platform_thread_init( const char *name,
     k_stack_t *thread_stack;
     thread = platform_memory_alloc(sizeof(platform_thread_t));
     thread_stack = (k_stack_t*) platform_memory_alloc(stack_size);
-    
-    err = tos_task_create(&(thread->thread), 
-                          (char*)name, 
+
+    err = tos_task_create(&(thread->thread),
+                          (char*)name,
                           entry,
-                          param, 
-                          priority, 
+                          param,
+                          priority,
                           thread_stack,
                           stack_size,
                           tick);
-    
+
     if(err != K_ERR_NONE) {
         platform_memory_free(thread);
         platform_memory_free(thread_stack);
@@ -43,7 +43,6 @@ void platform_thread_startup(platform_thread_t* thread)
     (void)thread;
 }
 
-
 void platform_thread_stop(platform_thread_t* thread)
 {
     tos_task_suspend(&(thread->thread));
@@ -54,7 +53,6 @@ void platform_thread_start(platform_thread_t* thread)
     tos_task_resume(&(thread->thread));
 }
 
-
 void platform_thread_destroy(platform_thread_t* thread)
 {
     if (NULL != thread)
@@ -62,5 +60,3 @@ void platform_thread_destroy(platform_thread_t* thread)
     platform_memory_free(thread->thread.stk_base);
     platform_memory_free(&(thread->thread));
 }
-
-

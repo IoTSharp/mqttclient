@@ -24,7 +24,7 @@ int nettype_tcp_connect(network_t* n)
     n->socket = platform_net_socket_connect(n->host, n->port, PLATFORM_NET_PROTO_TCP);
     if (n->socket < 0)
         RETURN_ERROR(n->socket);
-    
+
     RETURN_ERROR(MQTT_SUCCESS_ERROR);
 }
 

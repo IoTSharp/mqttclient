@@ -27,6 +27,3 @@ void platform_memory_free(void *ptr)
 {
     vPortFree(ptr);
 }
-
-
-

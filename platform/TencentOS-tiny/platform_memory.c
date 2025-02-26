@@ -22,6 +22,3 @@ void platform_memory_free(void *ptr)
 {
     tos_mmheap_free(ptr);
 }
-
-
-
