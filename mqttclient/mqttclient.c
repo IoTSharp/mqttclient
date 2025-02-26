@@ -1492,17 +1492,21 @@ int mqtt_set_will_options(mqtt_client_t* c, char *topic, mqtt_qos_t qos, uint8_t
         RETURN_ERROR(MQTT_NULL_VALUE_ERROR);
 
     if (NULL == c->mqtt_will_options) {
-        c->mqtt_will_options = (mqtt_will_options_t *)platform_memory_alloc(sizeof(mqtt_will_options_t));
+        c->mqtt_will_options = (mqtt_will_options_t *)platform_memory_alloc(sizeof(mqtt_will_options_t) + strlen(topic) + strlen(message) + 2);
         MQTT_ROBUSTNESS_CHECK(c->mqtt_will_options, MQTT_MEM_NOT_ENOUGH_ERROR);
     }
 
     if (0 == c->mqtt_will_flag)
         c->mqtt_will_flag = 1;
 
-    c->mqtt_will_options->will_topic = topic;
+    c->mqtt_will_options->will_topic = (char *)c->mqtt_will_options + sizeof(mqtt_will_options_t);
+    c->mqtt_will_options->will_message = c->mqtt_will_options->will_topic + strlen(topic) + 1;
+
+    strcpy(c->mqtt_will_options->will_topic, topic);
+    strcpy(c->mqtt_will_options->will_message, message);
+
     c->mqtt_will_options->will_qos = qos;
     c->mqtt_will_options->will_retained = retained;
-    c->mqtt_will_options->will_message = message;
 
     RETURN_ERROR(MQTT_SUCCESS_ERROR);
 }
