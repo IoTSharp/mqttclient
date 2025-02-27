@@ -1226,8 +1226,10 @@ mqtt_client_t *mqtt_lease(void)
     memset(c, 0, sizeof(mqtt_client_t));
 
     rc = mqtt_init(c);
-    if (MQTT_SUCCESS_ERROR != rc)
+    if (MQTT_SUCCESS_ERROR != rc) {
+        platform_memory_free(c);
         return NULL;
+    }
 
     return c;
 }
@@ -1266,10 +1268,15 @@ int mqtt_release(mqtt_client_t* c)
         c->mqtt_write_buf = NULL;
     }
 
+    if (NULL != c->mqtt_will_options) {
+        platform_memory_free(c->mqtt_will_options);
+        c->mqtt_will_options = NULL;
+    }
+
     platform_mutex_destroy(&c->mqtt_write_lock);
     platform_mutex_destroy(&c->mqtt_global_lock);
 
-    memset(c, 0, sizeof(mqtt_client_t));
+    platform_memory_free(c);
 
     RETURN_ERROR(MQTT_SUCCESS_ERROR);
 }
