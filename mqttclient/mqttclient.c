@@ -971,7 +971,7 @@ static int mqtt_connect_with_results(mqtt_client_t* c)
     mqtt_connack_data_t connack_data = {0};
     MQTTPacket_connectData connect_data = MQTTPacket_connectData_initializer;
 
-    if (NULL == c)
+    if (NULL == c || NULL == c->mqtt_network)
         RETURN_ERROR(MQTT_NULL_VALUE_ERROR);
 
     if (CLIENT_STATE_CONNECTED == mqtt_get_client_state(c))
@@ -983,12 +983,14 @@ static int mqtt_connect_with_results(mqtt_client_t* c)
     rc = network_init(c->mqtt_network, c->mqtt_host, c->mqtt_port, NULL);
 #endif
 
+    if (rc != MQTT_SUCCESS_ERROR) {
+        RETURN_ERROR(rc);
+    }
+
     rc = network_connect(c->mqtt_network);
     if (MQTT_SUCCESS_ERROR != rc) {
-        if (NULL != c->mqtt_network) {
-            network_release(c->mqtt_network);
-            RETURN_ERROR(rc);
-        }
+        network_release(c->mqtt_network);
+        RETURN_ERROR(rc);
     }
 
     MQTT_LOG_I("mqtt-client:%d %s()... mqtt connect success...", __LINE__, __FUNCTION__);
