@@ -1468,8 +1468,7 @@ exit:
     RETURN_ERROR(rc);
 }
 
-
-int mqtt_list_subscribe_topic(mqtt_client_t* c)
+int mqtt_list_subscribe_topic(mqtt_client_t* c, topiclist_hanndler_t handler)
 {
     int i = 0;
 
@@ -1488,6 +1487,8 @@ int mqtt_list_subscribe_topic(mqtt_client_t* c)
         /* determine whether a node already exists by mqtt topic, but wildcards are not supported */
         if (NULL != msg_handler->topic_filter) {
             MQTT_LOG_I("mqtt-client:%d %s() -[%d] subscribe topic: %s", __LINE__, __FUNCTION__, ++i ,msg_handler->topic_filter);
+            if (handler)
+                handler(msg_handler->topic_filter, msg_handler->qos);
         }
     }
 

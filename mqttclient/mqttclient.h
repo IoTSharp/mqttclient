@@ -65,6 +65,7 @@ typedef struct message_data {
 typedef void (*interceptor_handler_t)(void* client, message_data_t* msg);
 typedef void (*message_handler_t)(void* client, message_data_t* msg);
 typedef void (*reconnect_handler_t)(void* client, void* reconnect_date);
+typedef void (*topiclist_hanndler_t)(const char *topicname, mqtt_qos_t qos);
 
 typedef struct message_handlers {
     mqtt_list_t         list;
@@ -170,7 +171,7 @@ int mqtt_keep_alive(mqtt_client_t* c);
 int mqtt_subscribe(mqtt_client_t* c, const char* topic_filter, mqtt_qos_t qos, message_handler_t msg_handler);
 int mqtt_unsubscribe(mqtt_client_t* c, const char* topic_filter);
 int mqtt_publish(mqtt_client_t* c, const char* topic_filter, mqtt_message_t* msg);
-int mqtt_list_subscribe_topic(mqtt_client_t* c);
+int mqtt_list_subscribe_topic(mqtt_client_t* c, topiclist_hanndler_t handler);
 int mqtt_set_will_options(mqtt_client_t* c, char *topic, mqtt_qos_t qos, uint8_t retained, char *message);
 
 #ifdef __cplusplus
