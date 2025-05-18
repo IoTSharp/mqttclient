@@ -1248,6 +1248,10 @@ int mqtt_release(mqtt_client_t* c)
     platform_timer_init(&timer);
     platform_timer_cutdown(&timer, c->mqtt_cmd_timeout);
 
+    /* invalidate state if client is only initialized */
+    if (mqtt_get_client_state(c) == CLIENT_STATE_INITIALIZED)
+        mqtt_set_client_state(c, CLIENT_STATE_INVALID);
+
     /* wait for the clean session to complete */
     while ((CLIENT_STATE_INVALID != mqtt_get_client_state(c))) {
         // platform_timer_usleep(1000);            // 1ms avoid compiler optimization.
