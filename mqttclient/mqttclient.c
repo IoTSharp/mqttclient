@@ -990,6 +990,7 @@ static int mqtt_connect_with_results(mqtt_client_t* c)
     rc = network_connect(c->mqtt_network);
     if (MQTT_SUCCESS_ERROR != rc) {
         network_release(c->mqtt_network);
+        MQTT_LOG_E("mqtt-client:%d mqtt_connect() - mqtt connect error %d", __LINE__, rc);
         RETURN_ERROR(rc);
     }
 
