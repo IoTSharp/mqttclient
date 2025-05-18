@@ -112,6 +112,7 @@ typedef struct mqtt_client {
     uint32_t                    mqtt_read_buf_size;
     uint32_t                    mqtt_write_buf_size;
     uint32_t                    mqtt_reconnect_try_duration;
+    uint32_t                    mqtt_thread_stack_size;
     size_t                      mqtt_client_id_len;
     size_t                      mqtt_user_name_len;
     size_t                      mqtt_password_len;
@@ -159,6 +160,7 @@ MQTT_CLIENT_SET_STATEMENT(cmd_timeout, uint32_t)
 MQTT_CLIENT_SET_STATEMENT(read_buf_size, uint32_t)
 MQTT_CLIENT_SET_STATEMENT(write_buf_size, uint32_t)
 MQTT_CLIENT_SET_STATEMENT(reconnect_try_duration, uint32_t)
+MQTT_CLIENT_SET_STATEMENT(thread_stack_size, uint32_t)
 MQTT_CLIENT_SET_STATEMENT(reconnect_handler, reconnect_handler_t)
 MQTT_CLIENT_SET_STATEMENT(interceptor_handler, interceptor_handler_t)
 

@@ -1037,7 +1037,7 @@ exit:
         if(NULL == c->mqtt_thread) {
             mqtt_set_client_state(c, CLIENT_STATE_CONNECTED);
             /* connect success, and need init mqtt thread */
-            c->mqtt_thread= platform_thread_init("mqtt_yield_thread", mqtt_yield_thread, c, MQTT_THREAD_STACK_SIZE, MQTT_THREAD_PRIO, MQTT_THREAD_TICK);
+            c->mqtt_thread= platform_thread_init("mqtt_yield_thread", mqtt_yield_thread, c, c->mqtt_thread_stack_size, MQTT_THREAD_PRIO, MQTT_THREAD_TICK);
 
             if (NULL != c->mqtt_thread) {
                 platform_thread_startup(c->mqtt_thread);
@@ -1133,6 +1133,7 @@ static int mqtt_init(mqtt_client_t* c)
     c->mqtt_keep_alive_interval = MQTT_KEEP_ALIVE_INTERVAL;
     c->mqtt_version = MQTT_VERSION;
     c->mqtt_reconnect_try_duration = MQTT_RECONNECT_DEFAULT_DURATION;
+    c->mqtt_thread_stack_size = MQTT_THREAD_STACK_SIZE;
 
     c->mqtt_will_options = NULL;
     c->mqtt_reconnect_data = NULL;
@@ -1169,6 +1170,7 @@ MQTT_CLIENT_SET_DEFINE(clean_session, uint32_t, 0)
 MQTT_CLIENT_SET_DEFINE(version, uint32_t, 0)
 MQTT_CLIENT_SET_DEFINE(cmd_timeout, uint32_t, 0)
 MQTT_CLIENT_SET_DEFINE(reconnect_try_duration, uint32_t, 0)
+MQTT_CLIENT_SET_DEFINE(thread_stack_size, uint32_t, 0)
 MQTT_CLIENT_SET_DEFINE(reconnect_handler, reconnect_handler_t, NULL)
 MQTT_CLIENT_SET_DEFINE(interceptor_handler, interceptor_handler_t, NULL)
 
