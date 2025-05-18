@@ -80,10 +80,24 @@ int platform_net_socket_recv_timeout(int fd, unsigned char *buf, int len, int ti
     }
     return len - nleft;
 }
+ssize_t write_check_tcp(int __fd, __const void* __buf, size_t __n)
+{
+    struct tcp_info info;
+    socklen_t _len = sizeof(info);
+    getsockopt(__fd, IPPROTO_TCP, TCP_INFO, &info, (socklen_t*)&_len);
+    if ((info.tcpi_state == TCP_ESTABLISHED))
+    {
+        return write(__fd, __buf, __n);
+    }
+    else
+    {
+        return -1;
+    }
+ }
 
 int platform_net_socket_write(int fd, void *buf, size_t len)
 {
-    return write(fd, buf, len);
+    return write_check_tcp(fd, buf, len);
 }
 
 int platform_net_socket_write_timeout(int fd, unsigned char *buf, int len, int timeout)
@@ -99,8 +113,8 @@ int platform_net_socket_write_timeout(int fd, unsigned char *buf, int len, int t
     }
 
     setsockopt(fd, SOL_SOCKET, SO_SNDTIMEO, (char *)&tv,sizeof(struct timeval));
-
-    return write(fd, buf, len);
+   
+    return write_check_tcp(fd, buf, len);
 }
 
 int platform_net_socket_close(int fd)
