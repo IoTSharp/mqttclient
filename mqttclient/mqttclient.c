@@ -228,33 +228,56 @@ static int mqtt_is_topic_equals(const char *topic_filter, const char *topic)
     return 0;
 }
 
-static char mqtt_topic_is_matched(char* topic_filter, MQTTString* topic_name)
+static char mqtt_topic_is_matched(const char* topic_filter, MQTTString* topic_name)
 {
-    char* curf = topic_filter;
-    char* curn = topic_name->lenstring.data;
-    char* curn_end = curn + topic_name->lenstring.len;
-
-    while (*curf && curn < curn_end)
-    {
-        if (*curn == '/' && *curf != '/')
-            break;
-
-        /* support wildcards for MQTT topics, such as '#' '+' */
-        if (*curf != '+' && *curf != '#' && *curf != *curn)
-            break;
-
-        if (*curf == '+') {
-            char* nextpos = curn + 1;
-            while (nextpos < curn_end && *nextpos != '/')
-                nextpos = ++curn + 1;
+	const char* filter = topic_filter;
+    const char* topic = topic_name->lenstring.data;
+    int topic_len = topic_name != NULL && topic != NULL ? strnlen(topic, topic_name->lenstring.len) : 0;
+	int filter_len = strlen(filter);
+	int i = 0, j = 0;
+    while (i < filter_len && j < topic_len) {
+        if (filter[i] == '#') {
+            // '#' must be at the end and must be preceded by '/' or be the first character
+            if ((i == filter_len - 1) && (i == 0 || filter[i - 1] == '/')) {
+                return 1;
+            }
+            else {
+                return 0;
+            }
         }
-        else if (*curf == '#')
-            curn = curn_end - 1;
-        curf++;
-        curn++;
-    };
+        if (filter[i] == '+') {
+            // '+' must occupy an entire level
+            if ((i > 0 && filter[i - 1] != '/') || (i < filter_len - 1 && filter[i + 1] != '/' && filter[i + 1] != '\0')) {
+                return 0;
+            }
+            // Skip one level in the topic
+            while (j < topic_len && topic[j] != '/') j++;
+            i++;
+        }
+        else {
+            // Ordinary characters match one by one
+            if (filter[i] != topic[j]) {
+                return 0;
+            }
+            i++;
+            j++;
+        }
+        // Skip '/'
+        if (i < filter_len && filter[i] == '/' && j < topic_len && topic[j] == '/') {
+            i++;
+            j++;
+        }
+    }
 
-    return (curn == curn_end) && (*curf == '\0');
+    // Process ending
+    if (i == filter_len && j == topic_len) {
+        return 1;
+    }
+    // Allow ending with "/#" and topic is entirely consumed
+    if ((i == filter_len - 2) && filter[i] == '/' && filter[i + 1] == '#' && j == topic_len) {
+        return 1;
+    }
+    return 0;
 }
 
 static void mqtt_new_message_data(message_data_t* md, MQTTString* topic_name, mqtt_message_t* message)
