@@ -230,11 +230,11 @@ static int mqtt_is_topic_equals(const char *topic_filter, const char *topic)
 
 static char mqtt_topic_is_matched(const char* topic_filter, MQTTString* topic_name)
 {
-	const char* filter = topic_filter;
+    const char* filter = topic_filter;
     const char* topic = topic_name->lenstring.data;
-    int topic_len = topic_name != NULL && topic != NULL ? strnlen(topic, topic_name->lenstring.len) : 0;
-	int filter_len = strlen(filter);
-	int i = 0, j = 0;
+    int topic_len = topic_name == NULL || topic_name->lenstring.data == NULL || topic_name->lenstring.len <= 0 ? 0 : strnlen(topic, topic_name->lenstring.len);
+    int filter_len = strlen(filter);
+    int i = 0, j = 0;
     while (i < filter_len && j < topic_len) {
         if (filter[i] == '#') {
             // '#' must be at the end and must be preceded by '/' or be the first character
