@@ -228,6 +228,8 @@ static int mqtt_is_topic_equals(const char *topic_filter, const char *topic)
     return 0;
 }
 
+// topic_filter: The filter string used in subscription (may contain +/#), e.g. a/+/c or foo/#
+// topic_name:   The actual topic received (should not contain wildcards), e.g. a/b/c or foo/bar
 static char mqtt_topic_is_matched(const char* topic_filter, MQTTString* topic_name)
 {
     const char* filter = topic_filter;
@@ -465,8 +467,14 @@ static message_handlers_t *mqtt_msg_handler_create(const char* topic_filter, mqt
 static void mqtt_msg_handler_destory(message_handlers_t *msg_handler)
 {
     if (NULL != &msg_handler->list) {
+    
+        if (msg_handler->list.prev == NULL || msg_handler->list.next == NULL) return;
+    
         mqtt_list_del(&msg_handler->list);
+        msg_handler->list.prev == NULL;
+        msg_handler->list.next == NULL;
         platform_memory_free(msg_handler);
+        msg_handler = NULL;
     }
 }
 

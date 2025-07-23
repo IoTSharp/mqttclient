@@ -5,8 +5,9 @@
  * @LastEditTime: 2020-04-27 23:28:12
  * @Description: the following code references TencentOS tiny, please keep the author information and source code according to the license.
  */
+#include <stddef.h>
+#include "mqtt_list.h"
 
-# include "mqtt_list.h"
 
 static void _mqtt_list_add(mqtt_list_t *node, mqtt_list_t *prev, mqtt_list_t *next)
 {
@@ -43,9 +44,13 @@ void mqtt_list_add_tail(mqtt_list_t *node, mqtt_list_t *list)
     _mqtt_list_add(node, list->prev, list);
 }
 
-void mqtt_list_del(mqtt_list_t *entry)
+void mqtt_list_del(mqtt_list_t* entry)
 {
-    _mqtt_list_del(entry->prev, entry->next);
+	if (entry == NULL) return;
+	if (entry->prev == NULL || entry->next == NULL) return;
+	_mqtt_list_del(entry->prev, entry->next);
+	entry->prev = NULL;
+	entry->next = NULL;
 }
 
 void mqtt_list_del_init(mqtt_list_t *entry)
