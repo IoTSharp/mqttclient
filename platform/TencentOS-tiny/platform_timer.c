@@ -59,7 +59,7 @@ void platform_timer_usleep(unsigned long usec)
     k_tick_t tick;
 
     if(usec != 0) {
-        
+
         ms = usec / TOS_CFG_CPU_TICK_PER_SECOND;
 
         if (ms == 0) {

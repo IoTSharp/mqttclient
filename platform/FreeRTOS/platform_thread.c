@@ -17,7 +17,7 @@ platform_thread_t *platform_thread_init( const char *name,
 {
     BaseType_t err;
     platform_thread_t *thread;
-    
+
     thread = platform_memory_alloc(sizeof(platform_thread_t));
 
     (void)tick;
@@ -50,10 +50,11 @@ void platform_thread_start(platform_thread_t* thread)
 
 void platform_thread_destroy(platform_thread_t* thread)
 {
-    if (NULL != thread)
-        vTaskDelete(thread->thread);
-    
-    platform_memory_free(thread);
+    if (NULL != thread) {
+        TaskHandle_t thread_handle = thread->thread;
+
+        platform_memory_free(thread);
+
+        vTaskDelete(thread_handle);
+    }
 }
-
-

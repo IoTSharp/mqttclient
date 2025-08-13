@@ -21,6 +21,3 @@ void platform_memory_free(void *ptr)
 {
     free(ptr);
 }
-
-
-

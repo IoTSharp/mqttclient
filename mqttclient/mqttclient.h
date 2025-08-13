@@ -65,11 +65,12 @@ typedef struct message_data {
 typedef void (*interceptor_handler_t)(void* client, message_data_t* msg);
 typedef void (*message_handler_t)(void* client, message_data_t* msg);
 typedef void (*reconnect_handler_t)(void* client, void* reconnect_date);
+typedef void (*topiclist_hanndler_t)(const char *topicname, mqtt_qos_t qos);
 
 typedef struct message_handlers {
     mqtt_list_t         list;
     mqtt_qos_t          qos;
-    const char*         topic_filter;
+    char                *topic_filter;
     message_handler_t   handler;
 } message_handlers_t;
 
@@ -111,6 +112,7 @@ typedef struct mqtt_client {
     uint32_t                    mqtt_read_buf_size;
     uint32_t                    mqtt_write_buf_size;
     uint32_t                    mqtt_reconnect_try_duration;
+    uint32_t                    mqtt_thread_stack_size;
     size_t                      mqtt_client_id_len;
     size_t                      mqtt_user_name_len;
     size_t                      mqtt_password_len;
@@ -158,6 +160,7 @@ MQTT_CLIENT_SET_STATEMENT(cmd_timeout, uint32_t)
 MQTT_CLIENT_SET_STATEMENT(read_buf_size, uint32_t)
 MQTT_CLIENT_SET_STATEMENT(write_buf_size, uint32_t)
 MQTT_CLIENT_SET_STATEMENT(reconnect_try_duration, uint32_t)
+MQTT_CLIENT_SET_STATEMENT(thread_stack_size, uint32_t)
 MQTT_CLIENT_SET_STATEMENT(reconnect_handler, reconnect_handler_t)
 MQTT_CLIENT_SET_STATEMENT(interceptor_handler, interceptor_handler_t)
 
@@ -170,7 +173,7 @@ int mqtt_keep_alive(mqtt_client_t* c);
 int mqtt_subscribe(mqtt_client_t* c, const char* topic_filter, mqtt_qos_t qos, message_handler_t msg_handler);
 int mqtt_unsubscribe(mqtt_client_t* c, const char* topic_filter);
 int mqtt_publish(mqtt_client_t* c, const char* topic_filter, mqtt_message_t* msg);
-int mqtt_list_subscribe_topic(mqtt_client_t* c);
+int mqtt_list_subscribe_topic(mqtt_client_t* c, topiclist_hanndler_t handler);
 int mqtt_set_will_options(mqtt_client_t* c, char *topic, mqtt_qos_t qos, uint8_t retained, char *message);
 
 #ifdef __cplusplus

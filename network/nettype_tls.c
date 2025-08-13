@@ -51,9 +51,9 @@ static int nettype_tls_entropy_source(void *data, uint8_t *output, size_t len, s
 static int nettype_tls_init(network_t* n, nettype_tls_params_t* nettype_tls_params)
 {
     int rc = MQTT_SUCCESS_ERROR;
-    
+
     mbedtls_platform_set_calloc_free(platform_memory_calloc, platform_memory_free);
-    
+
     mbedtls_net_init(&(nettype_tls_params->socket_fd));
     mbedtls_ssl_init(&(nettype_tls_params->ssl));
     mbedtls_ssl_config_init(&(nettype_tls_params->ssl_conf));
@@ -99,7 +99,7 @@ static int nettype_tls_init(network_t* n, nettype_tls_params_t* nettype_tls_para
         MQTT_LOG_E("%s:%d %s()... mbedtls_ssl_conf_own_cert failed returned 0x%04x", __FILE__, __LINE__, __FUNCTION__, (rc < 0 )? -rc : rc);
         RETURN_ERROR(rc);
     }
-    
+
     mbedtls_ssl_conf_verify(&(nettype_tls_params->ssl_conf), server_certificate_verify, (void *)n->host);
 
     mbedtls_ssl_conf_authmode(&(nettype_tls_params->ssl_conf), MBEDTLS_SSL_VERIFY_REQUIRED);
@@ -130,7 +130,7 @@ int nettype_tls_connect(network_t* n)
     int rc;
     if (NULL == n)
         RETURN_ERROR(MQTT_NULL_VALUE_ERROR);
-    
+
     nettype_tls_params_t *nettype_tls_params = (nettype_tls_params_t *) platform_memory_alloc(sizeof(nettype_tls_params_t));
 
     if (NULL == nettype_tls_params)
@@ -170,12 +170,12 @@ exit:
 }
 
 
-void nettype_tls_disconnect(network_t* n) 
+void nettype_tls_disconnect(network_t* n)
 {
     int rc = 0;
     if (NULL == n)
         return;
-    
+
     nettype_tls_params_t *nettype_tls_params = (nettype_tls_params_t *) n->nettype_tls_params;
 
     do {
@@ -204,7 +204,7 @@ int nettype_tls_write(network_t *n, unsigned char *buf, int len, int timeout)
 
     if (NULL == n)
         RETURN_ERROR(MQTT_NULL_VALUE_ERROR);
-    
+
     nettype_tls_params_t *nettype_tls_params = (nettype_tls_params_t *) n->nettype_tls_params;
 
     platform_timer_cutdown(&timer, timeout);
@@ -217,7 +217,7 @@ int nettype_tls_write(network_t *n, unsigned char *buf, int len, int timeout)
         } else if ((rc == 0) || ((rc != MBEDTLS_ERR_SSL_WANT_WRITE) && (rc != MBEDTLS_ERR_SSL_WANT_READ) && (rc != MBEDTLS_ERR_SSL_TIMEOUT))) {
             MQTT_LOG_E("%s:%d %s()... mbedtls_ssl_write failed: 0x%04x", __FILE__, __LINE__, __FUNCTION__, (rc < 0 )? -rc : rc);
             break;
-        } 
+        }
     } while((!platform_timer_is_expired(&timer)) && (write_len < len));
 
     return write_len;
@@ -231,11 +231,11 @@ int nettype_tls_read(network_t *n, unsigned char *buf, int len, int timeout)
 
     if (NULL == n)
         RETURN_ERROR(MQTT_NULL_VALUE_ERROR);
-    
+
     nettype_tls_params_t *nettype_tls_params = (nettype_tls_params_t *) n->nettype_tls_params;
 
     platform_timer_cutdown(&timer, timeout);
-    
+
     do {
         rc = mbedtls_ssl_read(&(nettype_tls_params->ssl), (unsigned char *)(buf + read_len), len - read_len);
 
@@ -244,7 +244,7 @@ int nettype_tls_read(network_t *n, unsigned char *buf, int len, int timeout)
         } else if ((rc == 0) || ((rc != MBEDTLS_ERR_SSL_WANT_WRITE) && (rc != MBEDTLS_ERR_SSL_WANT_READ) && (rc != MBEDTLS_ERR_SSL_TIMEOUT))) {
             // MQTT_LOG_E("%s:%d %s()... mbedtls_ssl_read failed: 0x%04x", __FILE__, __LINE__, __FUNCTION__, (rc < 0 )? -rc : rc);
             break;
-        } 
+        }
     } while((!platform_timer_is_expired(&timer)) && (read_len < len));
 
     return read_len;

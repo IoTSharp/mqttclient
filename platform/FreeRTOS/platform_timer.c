@@ -62,11 +62,10 @@ void platform_timer_usleep(unsigned long usec)
 
     if(usec != 0) {
         tick = usec / portTICK_PERIOD_MS;
-        
+
         if (tick == 0)
             tick = 1;
     }
 
     vTaskDelay(tick);
 }
-

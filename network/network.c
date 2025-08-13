@@ -91,7 +91,7 @@ int network_set_ca(network_t *n, const char *ca)
 #ifndef MQTT_NETWORK_TYPE_NO_TLS
     if ((NULL == n) || (NULL == ca))
         RETURN_ERROR(MQTT_NULL_VALUE_ERROR);
-    
+
     n->ca_crt = ca;
     n->ca_crt_len = strlen(ca);
     n->channel = NETWORK_CHANNEL_TLS;
@@ -110,4 +110,3 @@ int network_set_host_port(network_t* n, char *host, char *port)
 
     RETURN_ERROR(MQTT_SUCCESS_ERROR);
 }
-
