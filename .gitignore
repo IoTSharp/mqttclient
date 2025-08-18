@@ -8,3 +8,4 @@ mqtt-client/
 *.tar
 *.db
 ~/
+/.vs

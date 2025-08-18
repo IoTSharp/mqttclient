@@ -62,4 +62,3 @@ void nettype_tls_disconnect(network_t* n);
 #endif
 
 #endif
-s
