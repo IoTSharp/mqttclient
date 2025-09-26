@@ -1,10 +1,10 @@
-[![](https://img.shields.io/github/v/tag/jiejietop/mqttclient?color=brightgreen&label=version)](https://github.com/jiejieTop/mqttclient/releases)
+[![](https://img.shields.io/github/v/tag/IoTSharp/mqttclient?color=brightgreen&label=version)](https://github.com/IoTSharp/mqttclient/releases)
 
-[![license](https://img.shields.io/badge/license-Apache-blue.svg)](https://github.com/jiejieTop/mqttclient/blob/master/LICENSE)
+[![license](https://img.shields.io/badge/license-Apache-blue.svg)](https://github.com/IoTSharp/mqttclient/blob/master/LICENSE)
 
-![](https://img.shields.io/github/forks/jiejieTop/mqttclient)
+![](https://img.shields.io/github/forks/IoTSharp/mqttclient)
 
-![](https://img.shields.io/github/stars/jiejieTop/mqttclient)
+![](https://img.shields.io/github/stars/IoTSharp/mqttclient)
 
 ![](https://img.shields.io/badge/platform-Linux|Windows|Mac|Embedded-orange.svg)
 
@@ -55,11 +55,6 @@ A high-performance, high-stability, cross-platform MQTT client, developed based 
 
 - **No other dependencies**.
 
-## Online code generation tool
-
-This project has a code generation tool that only requires online configuration to generate code, which is extremely simple and easy to use. The code generation tool address is: [https://jiejietop.gitee.io/mqtt/index.html](https://jiejietop.gitee.io/mqtt/index.html)
-
-![Online code generation tool](png/mqtt-tool.png)
 
 ## occupied resource size
 
@@ -114,7 +109,7 @@ Has a very clear layered framework.
 
 | Platform | Code Location |
 | -------------- | -------- |
-| Linux | [https://github.com/jiejieTop/mqttclient](https://github.com/jiejieTop/mqttclient) |
+| Linux | [https://github.com/IoTSharp/mqttclient](https://github.com/jiejieTop/mqttclient) |
 | TencentOS tiny | [https://github.com/Tencent/TencentOS-tiny/tree/master/board/Fire_STM32F429](https://github.com/Tencent/TencentOS-tiny/tree/master/board/Fire_STM32F429) |
 | TencentOS tiny AT framework | [https://github.com/jiejieTop/gokit3-board-mqttclient](https://github.com/jiejieTop/gokit3-board-mqttclient) |
 | RT-Thread | [https://github.com/jiejieTop/kawaii-mqtt](https://github.com/jiejieTop/kawaii-mqtt) |
@@ -133,11 +128,11 @@ Has a very clear layered framework.
 | [v1.1.0] | A larger version of the update, refactoring part of the code, optimizing the logic of MQTT processing, improving the overall stability, supporting multiple clients, supporting setting the will, optimizing the API interface, and adding multiple cloud platforms Test code and documentation, add online code generation tool, online cutting configuration tool |
 ## question
 
-Welcome to submit issues and bug reports in the form of [GitHub Issues](https://github.com/jiejieTop/mqttclient/issues)
+Welcome to submit issues and bug reports in the form of [GitHub Issues](https://github.com/IoTSharp/mqttclient/issues)
 
 ## Copyright and License
 
-mqttclient follows the [Apache License v2.0](https://github.com/jiejieTop/mqttclient/blob/master/LICENSE) open source agreement. Encourage code sharing and respect the copyright of the original author. You can freely use and modify the source code, or you can publish the modified code as open source or closed source software.
+mqttclient follows the [Apache License v2.0](https://github.com/IoTSharp/mqttclient/blob/master/LICENSE) open source agreement. Encourage code sharing and respect the copyright of the original author. You can freely use and modify the source code, or you can publish the modified code as open source or closed source software.
 
 ## Test and use under Linux platform
 
