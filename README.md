@@ -1,19 +1,15 @@
-[![](https://img.shields.io/github/v/tag/IoTSharp/mqttclient?color=brightgreen&label=version)](https://github.com/IoTSharp/mqttclient/releases)
-
-[![license](https://img.shields.io/badge/license-Apache-blue.svg)](https://github.com/IoTSharp/mqttclient/blob/master/LICENSE)
-
-![](https://img.shields.io/github/forks/IoTSharp/mqttclient)
-
-![](https://img.shields.io/github/stars/IoTSharp/mqttclient)
-
-![](https://img.shields.io/badge/platform-Linux|Windows|Mac|Embedded-orange.svg)
-
-[中文说明](README_CN.md)
 # mqttclient
 
 **A high-performance, high-stability, cross-platform MQTT client**
 
 A high-performance, high-stability, cross-platform MQTT client, developed based on the socket API, can be used on embedded devices (FreeRTOS/LiteOS/RT-Thread/TencentOS tiny), Linux, Windows, Mac, and has a very concise The API interface realizes the quality of service of QOS2 with very few resources, and seamlessly connects the mbedtls encryption library.
+
+[![](https://img.shields.io/github/v/tag/IoTSharp/mqttclient?color=brightgreen&label=version)](https://github.com/IoTSharp/mqttclient/releases)  [![license](https://img.shields.io/badge/license-Apache-blue.svg)](https://github.com/IoTSharp/mqttclient/blob/master/LICENSE)   ![](https://img.shields.io/github/forks/IoTSharp/mqttclient)  
+![](https://img.shields.io/github/stars/IoTSharp/mqttclient)   
+![](https://img.shields.io/badge/platform-Linux|Windows|Mac|Embedded-orange.svg)   
+
+[中文说明](README_CN.md)
+
 
 ## Advantage:
 
