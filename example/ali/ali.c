@@ -6,10 +6,23 @@
  * @Description: the code belongs to jiejie, please keep the author information and source code according to the license.
  */
 #include <stdio.h>
-#include <unistd.h>
-#include <fcntl.h>
 #include <stdlib.h>
-#include <pthread.h>
+#include <string.h>
+
+/* Platform-specific includes */
+#if defined(_WIN32) || defined(_WIN64) || defined(__CYGWIN__)
+    #include <windows.h>
+    #define sleep(x) Sleep((x)*1000)  /* Windows Sleep is in milliseconds */
+    typedef HANDLE pthread_t;
+    typedef DWORD (WINAPI *thread_func_t)(LPVOID);
+    #define pthread_create(thread, attr, start_routine, arg) \
+        ((*thread = CreateThread(NULL, 0, (thread_func_t)(start_routine), arg, 0, NULL)) == NULL ? -1 : 0)
+#else
+    #include <unistd.h>
+    #include <fcntl.h>
+    #include <pthread.h>
+#endif
+
 #include "mqttclient.h"
 
 static void topic1_handler(void* client, message_data_t* msg)

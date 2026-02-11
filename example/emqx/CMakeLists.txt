@@ -4,18 +4,28 @@ project(mqttclient_example)
 ##################
 ## set arg info ##
 ##################
-set(CMAKE_C_FLAGS "-Wall")
-set(CMAKE_C_FLAGS "-lpthread")
-set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS} -O0 -g -no-pie -ggdb")
-set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS} -O3 -DNDEBUG")
-
-if(CMAKE_COMPILER_IS_GNUCXX)
-    set(CMAKE_CXX_FLAGS "-std=c++11")
-    set(CMAKE_CXX_FLAGS "-lpthread")
-    set(CMAKE_CXX_FLAGS "-Wall")
-    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS} -O0 -g -no-pie -ggdb")
-    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS} -O3") 
-endif(CMAKE_COMPILER_IS_GNUCXX)
+# Platform-specific compiler flags
+if(MSVC)
+    # MSVC compiler flags for Windows
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /W3")
+    set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} /Od /Zi")
+    set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} /O2 /DNDEBUG")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W3")
+    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /Od /Zi")
+    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /O2")
+    add_definitions(-D_CRT_SECURE_NO_WARNINGS)
+else()
+    # GCC/Clang compiler flags for Linux/Unix
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -lpthread")
+    set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -O0 -g -no-pie -ggdb")
+    set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -O3 -DNDEBUG")
+    
+    if(CMAKE_COMPILER_IS_GNUCXX)
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -lpthread")
+        set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -O0 -g -no-pie -ggdb")
+        set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3") 
+    endif(CMAKE_COMPILER_IS_GNUCXX)
+endif()
 
 #########################
 ## find depend package ##
@@ -24,7 +34,10 @@ if(BUILD_EXAMPLES)
     set(PACKAGE_DEPEND ${MODULE_NAME})
 endif()
 
-find_package("Threads")
+# Only find Threads on non-Windows platforms
+if(NOT WIN32)
+    find_package("Threads")
+endif()
 
 ###########
 ## build ##
@@ -57,8 +70,11 @@ include_directories(${INC_DIRS})
 foreach(example_src_name ${EXAMPLE_SOURCES})
     get_filename_component(example_name ${example_src_name} NAME_WE)
     add_executable(${example_name}_example ${example_src_name} ${DEPEND_SOURCES})
-    target_link_libraries(${example_name}_example ${CMAKE_THREAD_LIBS_INIT} ${PACKAGE_DEPEND})
+    if(WIN32)
+        target_link_libraries(${example_name}_example ${PACKAGE_DEPEND})
+    else()
+        target_link_libraries(${example_name}_example ${CMAKE_THREAD_LIBS_INIT} ${PACKAGE_DEPEND})
+    endif()
     message(STATUS "build example : ${example_name} ")
 endforeach()
-
 
