@@ -185,6 +185,8 @@ The following issues have been fixed to support Windows builds:
 12. **SALOF Platform Constants**: Fixed definition order in `salof_defconfig.h`
     - Platform constants (SALOF_USING_WINDOWS, etc.) now defined before including salof_config.h
     - Ensures mqtt_config.h can use these constants when setting SALOF_OS
+    - Added fallback platform detection for when SALOF_OS isn't defined by config
+    - Fallback detects Windows via _WIN32, _WIN64, __CYGWIN__, or _MSC_VER macros
     - Fixes examples failing to build due to pthread.h include on Windows
 
 ## Troubleshooting

@@ -72,8 +72,15 @@
 
 #endif
 
+/* Fallback platform detection if SALOF_OS isn't defined by mqtt_config.h */
 #if !defined(SALOF_OS)
-    #error "SALOF_OS isn't defined in 'salof_config.h'"
+    #if defined(_WIN32) || defined(_WIN64) || defined(__CYGWIN__) || defined(_MSC_VER)
+        #define SALOF_OS SALOF_USING_WINDOWS
+    #elif defined(__linux__) || defined(__unix__)
+        #define SALOF_OS SALOF_USING_LINUX
+    #else
+        #error "SALOF_OS isn't defined and platform cannot be auto-detected"
+    #endif
 #endif
 
 #if (SALOF_OS == SALOF_USING_FREERTOS)
