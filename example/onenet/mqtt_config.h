@@ -11,11 +11,21 @@
 
 #define             MQTT_LOG_LEVEL                      MQTT_LOG_INFO_LEVEL   //MQTT_LOG_WARN_LEVEL MQTT_LOG_DEBUG_LEVEL
 
+ // Only define SALOF_OS if not already defined by salof_config.h
+ // salof_config.h has comprehensive platform detection that should be used first
+#ifndef SALOF_OS
+    // Fallback platform detection if salof_config.h didn't define it
+#if defined(_WIN32) || defined(_WIN64) || defined(__CYGWIN__)
+#define     SALOF_OS                            SALOF_USING_WINDOWS
+#else
+#define     SALOF_OS                            SALOF_USING_LINUX
+#endif
+#endif
+
 #ifdef MQTT_LOG_IS_SALOF
     #define         SALOF_USING_LOG                     (1U)
     #define         SALOF_USING_SALOF                   (1U)
     #define         SALOF_LOG_LEVEL                     MQTT_LOG_LEVEL
-    #define         SALOF_OS                            SALOF_USING_LINUX
     #define         SALOF_USING_IDLE_HOOK               (0U)
     #define         SALOF_LOG_COLOR                     (1U)
     #define         SALOF_LOG_TS                        (0U)

@@ -9,19 +9,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-/* Platform-specific includes */
-#if defined(_WIN32) || defined(_WIN64) || defined(__CYGWIN__)
-    #include <windows.h>
-    #define sleep(x) Sleep((x)*1000)  /* Windows Sleep is in milliseconds */
-    typedef HANDLE pthread_t;
-    typedef DWORD (WINAPI *thread_func_t)(LPVOID);
-    #define pthread_create(thread, attr, start_routine, arg) \
-        ((*thread = CreateThread(NULL, 0, (thread_func_t)(start_routine), arg, 0, NULL)) == NULL ? -1 : 0)
-#else
-    #include <unistd.h>
-    #include <fcntl.h>
-    #include <pthread.h>
-#endif
+#include "../example.h"
 
 #include "mqtt_config.h"
 #include "mqtt_log.h"
@@ -50,7 +38,6 @@ void *mqtt_publish_thread(void *arg)
 
     sleep(2);
 
-    mqtt_list_subscribe_topic(client);
 
     msg.payload = (void *) buf;
     

@@ -8,11 +8,6 @@
 #ifndef _SALOF_DEFCONFIG_H_
 #define _SALOF_DEFCONFIG_H_
 
-/* 
- * Platform constants are now defined in salof_config.h 
- * so they're available before any detection code runs
- * 平台常量现在在 salof_config.h 中定义，在任何检测代码运行之前就可用
- */
 #include "salof_config.h"
 
 #ifdef SALOF_USING_LOG
@@ -67,16 +62,7 @@
 
 #endif
 
-/* Fallback platform detection if SALOF_OS isn't defined by mqtt_config.h */
-#if !defined(SALOF_OS)
-    #if defined(_WIN32) || defined(_WIN64) || defined(__CYGWIN__) || defined(_MSC_VER)
-        #define SALOF_OS SALOF_USING_WINDOWS
-    #elif defined(__linux__) || defined(__unix__)
-        #define SALOF_OS SALOF_USING_LINUX
-    #else
-        #error "SALOF_OS isn't defined and platform cannot be auto-detected"
-    #endif
-#endif
+ 
 
 #if (SALOF_OS == SALOF_USING_FREERTOS)
     #include "FreeRTOS.h"
