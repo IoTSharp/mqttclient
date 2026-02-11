@@ -8,6 +8,22 @@
 #ifndef _PLATFORM_NET_SOCKET_H_
 #define _PLATFORM_NET_SOCKET_H_
 
+/* 
+ * Windows Sockets 2 requires specific header include order and definitions.
+ * These must be defined BEFORE including any Windows headers to avoid conflicts.
+ */
+#ifndef WIN32_LEAN_AND_MEAN
+#define WIN32_LEAN_AND_MEAN  /* Exclude rarely-used services from Windows headers */
+#endif
+
+#ifndef _WINSOCKAPI_
+#define _WINSOCKAPI_  /* Prevent inclusion of winsock.h in windows.h */
+#endif
+
+/* 
+ * Include Winsock2 headers BEFORE windows.h
+ * This is critical for proper compilation with Windows SDK
+ */
 #include <winsock2.h>
 #include <ws2tcpip.h>
 #include <windows.h>

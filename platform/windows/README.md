@@ -150,8 +150,23 @@ The following issues have been fixed to support Windows builds:
 3. **Thread API**: Implemented Windows-native threading using CRITICAL_SECTION, Windows Semaphore, and CreateThread
 4. **Weak Functions**: Fixed `platform_timer_now()` weak function to work with MSVC using `/alternatename` linker directive
 5. **Platform Detection**: Automatically detect Windows platform and use SALOF_USING_WINDOWS configuration
+6. **Windows SDK Headers**: Fixed header include order to prevent Winsock2 conflicts
+   - Added `WIN32_LEAN_AND_MEAN` and `_WINSOCKAPI_` definitions
+   - Ensured `winsock2.h` is included before `windows.h`
+   - Fixes `IPPROTO_IPV6` undeclared and `ICMP_ERROR_INFO` syntax errors
 
 ## Troubleshooting
+
+### Windows SDK Header Errors
+
+If you encounter errors like:
+- `error C2065: "IPPROTO_IPV6": 未声明的标识符`
+- Syntax errors in `ws2tcpip.h` related to `ICMP_ERROR_INFO`
+
+These are caused by incorrect Windows header include order. The fix ensures:
+1. `WIN32_LEAN_AND_MEAN` is defined to minimize Windows header dependencies
+2. `_WINSOCKAPI_` prevents old winsock1 from being included
+3. `winsock2.h` and `ws2tcpip.h` are included before `windows.h`
 
 ### Winsock Errors
 If you encounter network-related errors, check:
