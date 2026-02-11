@@ -471,8 +471,8 @@ static void mqtt_msg_handler_destory(message_handlers_t *msg_handler)
         if (msg_handler->list.prev == NULL || msg_handler->list.next == NULL) return;
     
         mqtt_list_del(&msg_handler->list);
-        msg_handler->list.prev == NULL;
-        msg_handler->list.next == NULL;
+        msg_handler->list.prev = NULL;
+        msg_handler->list.next = NULL;
         platform_memory_free(msg_handler);
         msg_handler = NULL;
     }
