@@ -22,19 +22,28 @@ set(EXECUTABLE_OUTPUT_PATH ${PROJECT_ROOT_DIR}/build/bin)       #设置可执行
 set(LIBRARY_OUTPUT_PATH ${PROJECT_ROOT_DIR}/build/lib)           #设置库文件的输出目录
 link_directories(${LIBRARY_OUTPUT_PATH})
 
-
-set(CMAKE_C_FLAGS "-Wall")
-set(CMAKE_C_FLAGS "-lpthread")
-set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS} -O0 -g -no-pie -ggdb")
-set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS} -O3 -DNDEBUG")
-
-if(CMAKE_COMPILER_IS_GNUCXX)
-    set(CMAKE_CXX_FLAGS "-std=c++11")
-    set(CMAKE_CXX_FLAGS "-lpthread")
-    set(CMAKE_CXX_FLAGS "-Wall")
-    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS} -O0 -g -no-pie -ggdb")
-    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS} -O3") 
-endif(CMAKE_COMPILER_IS_GNUCXX)
+# Platform-specific compiler flags
+if(MSVC)
+    # MSVC compiler flags for Windows
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /W3")
+    set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} /Od /Zi")
+    set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} /O2 /DNDEBUG")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W3")
+    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /Od /Zi")
+    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /O2")
+    add_definitions(-D_CRT_SECURE_NO_WARNINGS)
+else()
+    # GCC/Clang compiler flags for Linux/Unix
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -lpthread")
+    set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -O0 -g -no-pie -ggdb")
+    set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -O3 -DNDEBUG")
+    
+    if(CMAKE_COMPILER_IS_GNUCXX)
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -lpthread")
+        set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -O0 -g -no-pie -ggdb")
+        set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3") 
+    endif(CMAKE_COMPILER_IS_GNUCXX)
+endif()
 
 
 #########################################

@@ -16,6 +16,7 @@
 #define         SALOF_USING_FREERTOS        2
 #define         SALOF_USING_TENCENTOS       3
 #define         SALOF_USING_LINUX           4
+#define         SALOF_USING_WINDOWS         5
 
 #define         SALOF_BASE_LEVEL          (0)
 #define         SALOF_ERR_LEVEL           (SALOF_BASE_LEVEL + 1)
@@ -110,6 +111,16 @@
     #define salof_mutex     pthread_mutex_t*
     #define salof_sem       sem_t*
     #define salof_tcb       pthread_t*
+    #define SALOF_TASK_PRIO (0U)
+    #undef  SALOF_USING_IDLE_HOOK
+
+#elif (SALOF_OS == SALOF_USING_WINDOWS)
+    #include <windows.h>
+    #include <stdlib.h>
+    #include <stdio.h>
+    #define salof_mutex     CRITICAL_SECTION*
+    #define salof_sem       HANDLE*
+    #define salof_tcb       HANDLE*
     #define SALOF_TASK_PRIO (0U)
     #undef  SALOF_USING_IDLE_HOOK
 

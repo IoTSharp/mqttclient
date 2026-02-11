@@ -14,11 +14,25 @@
 extern int platform_timer_now();
 static unsigned int last_seed = 1;
 
-
-int __attribute__((weak)) platform_timer_now()
-{
-    return 1;
-}
+// Weak function declaration compatible with both GCC and MSVC
+#if defined(_MSC_VER)
+    #pragma comment(linker, "/alternatename:platform_timer_now=default_platform_timer_now")
+    int default_platform_timer_now(void)
+    {
+        return 1;
+    }
+#elif defined(__GNUC__)
+    int __attribute__((weak)) platform_timer_now(void)
+    {
+        return 1;
+    }
+#else
+    // Fallback for other compilers - just provide the implementation
+    int platform_timer_now(void)
+    {
+        return 1;
+    }
+#endif
 
 static int do_random(unsigned int seed)
 {

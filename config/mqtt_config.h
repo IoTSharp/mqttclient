@@ -15,7 +15,14 @@
     #define         SALOF_USING_LOG                     (1U)
     #define         SALOF_USING_SALOF                   (1U)
     #define         SALOF_LOG_LEVEL                     MQTT_LOG_LEVEL
-    #define         SALOF_OS                            SALOF_USING_LINUX
+    
+    // Auto-detect platform
+    #if defined(_WIN32) || defined(_WIN64) || defined(__CYGWIN__)
+        #define     SALOF_OS                            SALOF_USING_WINDOWS
+    #else
+        #define     SALOF_OS                            SALOF_USING_LINUX
+    #endif
+    
     #define         SALOF_USING_IDLE_HOOK               (0U)
     #define         SALOF_LOG_COLOR                     (1U)
     #define         SALOF_LOG_TS                        (0U)
