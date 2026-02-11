@@ -2,6 +2,13 @@ string(REGEX REPLACE ".*/(.*)" "\\1" CURRENT_LIB_NAME ${CMAKE_CURRENT_SOURCE_DIR
 
 set(CURRENT_LIB_NAME ${LIBRARY_PREFIX}-${CURRENT_LIB_NAME})
 
+# Select platform-specific arch directory
+if(WIN32)
+    set(ARCH_DIR ${CMAKE_CURRENT_SOURCE_DIR}/arch/windows)
+else()
+    set(ARCH_DIR ${CMAKE_CURRENT_SOURCE_DIR}/arch/linux)
+endif()
+
 # 指定头文件搜索目录
 set(${CURRENT_LIB_NAME}_INC_DIRS
     ${CMAKE_CURRENT_SOURCE_DIR}/
@@ -10,7 +17,7 @@ set(${CURRENT_LIB_NAME}_INC_DIRS
 # 源文件目录
 set(${CURRENT_LIB_NAME}_SRC_DIRS 
     ${CMAKE_CURRENT_SOURCE_DIR}/
-    ${CMAKE_CURRENT_SOURCE_DIR}/arch/linux
+    ${ARCH_DIR}
 )
 
 set_module_info(${CURRENT_LIB_NAME} "${${CURRENT_LIB_NAME}_INC_DIRS}")
@@ -23,10 +30,14 @@ endforeach()
 
 # 生成动态库
 add_library(${CURRENT_LIB_NAME}        SHARED ${${CURRENT_LIB_NAME}_SOURCES})
-target_link_libraries(${CURRENT_LIB_NAME} ${CMAKE_THREAD_LIBS_INIT})
 # 生成静态库
 add_library(${CURRENT_LIB_NAME}_static STATIC ${${CURRENT_LIB_NAME}_SOURCES})
-target_link_libraries(${CURRENT_LIB_NAME}_static ${CMAKE_THREAD_LIBS_INIT})
+
+# Link threading library only on non-Windows platforms
+if(NOT WIN32)
+    target_link_libraries(${CURRENT_LIB_NAME} ${CMAKE_THREAD_LIBS_INIT})
+    target_link_libraries(${CURRENT_LIB_NAME}_static ${CMAKE_THREAD_LIBS_INIT})
+endif()
 
 # 进行必要的配置，以生成动态库和静态库
 # 指定静态库的输出名称

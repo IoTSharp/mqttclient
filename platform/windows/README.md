@@ -167,6 +167,10 @@ The following issues have been fixed to support Windows builds:
    - This eliminates numerous mbedtls-related compilation errors
    - Controlled by `MQTT_NETWORK_TYPE_NO_TLS` in `config/mqtt_config.h`
    - Linux builds continue to support TLS via mbedtls
+8. **Logging Arch Selection**: Fixed CMakeLists.txt to select correct arch implementation
+   - `common/log/CMakeLists.txt` now selects Windows or Linux arch directory based on platform
+   - Prevents compilation of Linux pthread code on Windows
+   - Eliminates `pthread_t`, `pthread_mutex_t`, `sem_t` undeclared identifier errors
 
 ## Troubleshooting
 
