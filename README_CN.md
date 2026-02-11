@@ -1,10 +1,10 @@
-[![](https://img.shields.io/github/v/tag/jiejietop/mqttclient?color=brightgreen&label=version)](https://github.com/jiejieTop/mqttclient/releases)
+[![](https://img.shields.io/github/v/tag/IoTSharp/mqttclient?color=brightgreen&label=version)](https://github.com/IoTSharp/mqttclient/releases)
 
-[![license](https://img.shields.io/badge/license-Apache-blue.svg)](https://github.com/jiejieTop/mqttclient/blob/master/LICENSE)
+[![license](https://img.shields.io/badge/license-Apache-blue.svg)](https://github.com/IoTSharp/mqttclient/blob/master/LICENSE)
 
-![](https://img.shields.io/github/forks/jiejieTop/mqttclient)
+![](https://img.shields.io/github/forks/IoTSharp/mqttclient)
 
-![](https://img.shields.io/github/stars/jiejieTop/mqttclient)
+![](https://img.shields.io/github/stars/IoTSharp/mqttclient)
 
 ![](https://img.shields.io/badge/platform-Linux|Windows|Mac|Embedded-orange.svg)
 
@@ -115,8 +115,8 @@
 
 | 平台           | 代码位置 |
 | -------------- | -------- |
-| Linux          | [https://github.com/jiejieTop/mqttclient](https://github.com/jiejieTop/mqttclient) |
-| Windows        | [https://github.com/jiejieTop/mqttclient](https://github.com/jiejieTop/mqttclient) |
+| Linux          | [https://github.com/IoTSharp/mqttclient](https://github.com/IoTSharp/mqttclient) |
+| Windows        | [https://github.com/IoTSharp/mqttclient](https://github.com/IoTSharp/mqttclient) |
 | TencentOS tiny | [https://github.com/Tencent/TencentOS-tiny/tree/master/board/Fire_STM32F429](https://github.com/Tencent/TencentOS-tiny/tree/master/board/Fire_STM32F429) |
 | TencentOS tiny AT 框架 | [https://github.com/jiejieTop/gokit3-board-mqttclient](https://github.com/jiejieTop/gokit3-board-mqttclient) |
 | RT-Thread      | [https://github.com/jiejieTop/kawaii-mqtt](https://github.com/jiejieTop/kawaii-mqtt) |
@@ -136,11 +136,11 @@
 
 ## 问题
 
-欢迎以 [GitHub Issues](https://github.com/jiejieTop/mqttclient/issues) 的形式提交问题和bug报告
+欢迎以 [GitHub Issues](https://github.com/IoTSharp/mqttclient/issues) 的形式提交问题和bug报告
 
 ## 版权和许可
 
-mqttclient 遵循 [Apache License v2.0](https://github.com/jiejieTop/mqttclient/blob/master/LICENSE) 开源协议。鼓励代码共享和尊重原作者的著作权，可以自由的使用、修改源代码，也可以将修改后的代码作为开源或闭源软件发布。
+mqttclient 遵循 [Apache License v2.0](https://github.com/IoTSharp/mqttclient/blob/master/LICENSE) 开源协议。鼓励代码共享和尊重原作者的著作权，可以自由的使用、修改源代码，也可以将修改后的代码作为开源或闭源软件发布。
 
 ## linux平台下测试使用
 

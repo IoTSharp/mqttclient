@@ -1,8 +1,8 @@
 /*
  * @Author: jiejie
- * @Github: https://github.com/jiejieTop
- * @Date: 2019-12-23 19:26:27
- * @LastEditTime: 2020-02-23 16:19:07
+ * @Github: https://github.com/IoTSharp
+ * @Date: 2026-02-11 00:00:00
+ * @LastEditTime: 2026-02-11 03:20:00
  * @Description: the code belongs to jiejie, please keep the author information and source code according to the license.
  */
 #include "platform_thread.h"

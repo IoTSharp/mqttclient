@@ -1,8 +1,8 @@
 /*
  * @Author: jiejie
- * @Github: https://github.com/jiejieTop
- * @Date: 2020-01-10 23:45:59
- * @LastEditTime: 2020-06-05 17:13:00
+ * @Github: https://github.com/IoTSharp
+ * @Date: 2026-02-11 00:00:00
+ * @LastEditTime: 2026-02-11 03:20:00
  * @Description: the code belongs to jiejie, please keep the author information and source code according to the license.
  */
 #include "platform_net_socket.h"

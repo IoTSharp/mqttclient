@@ -1,8 +1,8 @@
 /*
  * @Author: jiejie
- * @Github: https://github.com/jiejieTop
- * @Date: 2019-12-14 22:06:35
- * @LastEditTime: 2020-10-17 14:17:24
+ * @Github: https://github.com/IoTSharp
+ * @Date: 2026-02-11 00:00:00
+ * @LastEditTime: 2026-02-11 03:20:00
  * @Description: the code belongs to jiejie, please keep the author information and source code according to the license.
  */
 #ifndef _PLATFORM_MEMORY_H_
