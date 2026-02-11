@@ -114,8 +114,8 @@
     #define SALOF_TASK_PRIO (RT_THREAD_PRIORITY_MAX - 1)
     
 #elif (SALOF_OS == SALOF_USING_LINUX)
-    #include "pthread.h"
-    #include "memory.h"
+    #include <pthread.h>
+    #include <string.h>
     #include <semaphore.h>
     #include <stdlib.h>
     #include <stdio.h>
