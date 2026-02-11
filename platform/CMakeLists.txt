@@ -4,17 +4,31 @@ set(CURRENT_LIB_NAME ${LIBRARY_PREFIX}-${CURRENT_LIB_NAME})
 
 set(DEPEND_LIBRARY_INTERNAL "common")
 
+# Detect platform and set platform-specific directories
+if(WIN32)
+    set(PLATFORM_DIR "windows")
+else()
+    set(PLATFORM_DIR "linux")
+endif()
+
 # 指定头文件搜索目录
 set(${CURRENT_LIB_NAME}_INC_DIRS
-    ${CMAKE_CURRENT_SOURCE_DIR}/linux
+    ${CMAKE_CURRENT_SOURCE_DIR}/${PLATFORM_DIR}
 )
 
 # 源文件目录
 set(${CURRENT_LIB_NAME}_SRC_DIRS
-    ${CMAKE_CURRENT_SOURCE_DIR}/linux
+    ${CMAKE_CURRENT_SOURCE_DIR}/${PLATFORM_DIR}
 )
 
-find_package("Threads")
+if(WIN32)
+    # Windows specific libraries
+    set(PLATFORM_LIBS ws2_32)
+else()
+    # Linux/Unix specific
+    find_package("Threads")
+    set(PLATFORM_LIBS ${CMAKE_THREAD_LIBS_INIT})
+endif()
 
 set_module_info(${CURRENT_LIB_NAME} "${${CURRENT_LIB_NAME}_INC_DIRS}")
 get_module_info()
@@ -30,10 +44,10 @@ endforeach()
 
 # 生成动态库
 add_library(${CURRENT_LIB_NAME}        SHARED ${${CURRENT_LIB_NAME}_SOURCES})
-target_link_libraries(${CURRENT_LIB_NAME} ${DEPEND_LIBRARY} ${CMAKE_THREAD_LIBS_INIT})
+target_link_libraries(${CURRENT_LIB_NAME} ${DEPEND_LIBRARY} ${PLATFORM_LIBS})
 # 生成静态库
 add_library(${CURRENT_LIB_NAME}_static STATIC ${${CURRENT_LIB_NAME}_SOURCES})
-target_link_libraries(${CURRENT_LIB_NAME}_static ${DEPEND_LIBRARY_STATIC} ${CMAKE_THREAD_LIBS_INIT})
+target_link_libraries(${CURRENT_LIB_NAME}_static ${DEPEND_LIBRARY_STATIC} ${PLATFORM_LIBS})
 
 # 进行必要的配置，以生成动态库和静态库
 # 指定静态库的输出名称
