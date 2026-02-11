@@ -195,6 +195,17 @@ The following issues have been fixed to support Windows builds:
     - Detection uses compiler-defined macros (_WIN32, __linux__, etc.)
     - Works independently of MQTT configuration
     - See `common/log/README.md` for detailed documentation
+14. **Fixed pthread.h Include Issues**: Corrected system header syntax
+    - Changed `#include "pthread.h"` to `#include <pthread.h>` in salof_defconfig.h
+    - Changed `#include "memory.h"` to `#include <string.h>` (correct standard header)
+    - System headers should use angle brackets, not quotes
+15. **Fixed SALOF_OS Redefinition Conflict**: Prevented platform detection override
+    - `mqtt_config.h` now checks if `SALOF_OS` is already defined before defining it
+    - Added `#ifndef SALOF_OS` guard to respect salof_config.h detection
+    - Establishes proper detection priority: salof_config.h → mqtt_config.h → salof_defconfig.h
+    - Eliminates redefinition that was causing Windows to be detected as Linux
+    - Ensures Windows builds use `<windows.h>` instead of attempting to include `<pthread.h>`
+    - Fixes: "error C1083: 无法打开包括文件: 'pthread.h': No such file or directory"
 
 ## Troubleshooting
 
