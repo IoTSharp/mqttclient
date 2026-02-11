@@ -2,13 +2,17 @@ string(REGEX REPLACE ".*/(.*)" "\\1" CURRENT_LIB_NAME ${CMAKE_CURRENT_SOURCE_DIR
 
 set(CURRENT_LIB_NAME ${LIBRARY_PREFIX}-${CURRENT_LIB_NAME})
 
-set(SUBDIRS "mbedtls")
-
-foreach(subdir ${SUBDIRS})
-    add_subdirectory(${subdir})
-endforeach()
-
-set(DEPEND_LIBRARY_INTERNAL "common" "log" "platform" "mbedtls")
+# On Windows, disable mbedtls/TLS due to compilation issues
+if(NOT WIN32)
+    set(SUBDIRS "mbedtls")
+    foreach(subdir ${SUBDIRS})
+        add_subdirectory(${subdir})
+    endforeach()
+    set(DEPEND_LIBRARY_INTERNAL "common" "log" "platform" "mbedtls")
+else()
+    # Windows: No TLS/mbedtls support
+    set(DEPEND_LIBRARY_INTERNAL "common" "log" "platform")
+endif()
 
 # 指定头文件搜索目录
 set(${CURRENT_LIB_NAME}_INC_DIRS
@@ -23,11 +27,15 @@ set(${CURRENT_LIB_NAME}_SRC_DIRS
 set_module_info(${CURRENT_LIB_NAME} "${${CURRENT_LIB_NAME}_INC_DIRS}")
 get_module_info()
 
-
-
+# Collect source files
 foreach(FOREACH_SRC_DIR ${${CURRENT_LIB_NAME}_SRC_DIRS})
     aux_source_directory(${FOREACH_SRC_DIR} ${CURRENT_LIB_NAME}_SOURCES)
 endforeach()
+
+# On Windows, exclude nettype_tls.c from build
+if(WIN32)
+    list(FILTER ${CURRENT_LIB_NAME}_SOURCES EXCLUDE REGEX ".*nettype_tls\\.c$")
+endif()
 
 
 foreach(lib ${DEPEND_LIBRARY_INTERNAL})

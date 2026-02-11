@@ -94,10 +94,17 @@ High-resolution timing is implemented using:
 ### Network Sockets
 Windows Sockets (Winsock2) implementation:
 - Automatic Winsock initialization (WSAStartup)
-- Support for both TCP and UDP protocols
+- Support for TCP protocol (UDP also available)
 - IPv4 and IPv6 support
 - Blocking and non-blocking socket modes
 - Timeout support for send/receive operations
+
+**Note on TLS/SSL Support:**
+- TLS/SSL (mbedtls) is **disabled on Windows** by default to avoid compilation issues
+- Windows builds use TCP-only connections (no encryption)
+- This means MQTT connections on Windows will be unencrypted
+- For production use requiring encryption, consider using a TLS-terminating proxy or VPN
+- Linux builds continue to support TLS/SSL via mbedtls
 
 ## Linking Requirements
 
@@ -154,6 +161,12 @@ The following issues have been fixed to support Windows builds:
    - Added `WIN32_LEAN_AND_MEAN` and `_WINSOCKAPI_` definitions
    - Ensured `winsock2.h` is included before `windows.h`
    - Fixes `IPPROTO_IPV6` undeclared and `ICMP_ERROR_INFO` syntax errors
+7. **TLS/SSL Disabled on Windows**: Due to mbedtls compilation issues on Windows
+   - TLS support (`nettype_tls.c`) is automatically disabled on Windows
+   - Windows builds use TCP-only connections (no encryption)
+   - This eliminates numerous mbedtls-related compilation errors
+   - Controlled by `MQTT_NETWORK_TYPE_NO_TLS` in `config/mqtt_config.h`
+   - Linux builds continue to support TLS via mbedtls
 
 ## Troubleshooting
 

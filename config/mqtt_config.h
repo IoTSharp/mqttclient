@@ -48,6 +48,13 @@
 #define     MQTT_THREAD_TICK                    50
 
 
+// Disable TLS on Windows due to compilation issues with mbedtls
+// Windows builds will use TCP-only connections
+#if defined(_WIN32) || defined(_WIN64) || defined(__CYGWIN__)
+    #define     MQTT_NETWORK_TYPE_NO_TLS
+#endif
+
+// Uncomment to manually disable TLS on all platforms
 // #define     MQTT_NETWORK_TYPE_NO_TLS
 
 #endif /* _MQTT_CONFIG_H_ */
