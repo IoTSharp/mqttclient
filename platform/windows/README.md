@@ -181,6 +181,17 @@ These are caused by incorrect Windows header include order. The fix ensures:
 2. `_WINSOCKAPI_` prevents old winsock1 from being included
 3. `winsock2.h` and `ws2tcpip.h` are included before `windows.h`
 
+### Winsock Redefinition Errors
+
+If you encounter errors like:
+- `error C2375: "WSAAsyncGetServByPort": 重定义；不同的链接`
+- Similar errors for other WSA functions
+
+These occur when both `winsock.h` and `winsock2.h` are included. The fix:
+- Network source files (`nettype_tcp.c`, `network.c`) define `_WINSOCKAPI_` before any includes
+- This prevents `windows.h` from automatically including the old `winsock.h`
+- Ensures only `winsock2.h` is used throughout the codebase
+
 ### Winsock Errors
 If you encounter network-related errors, check:
 - Windows Firewall settings

@@ -5,6 +5,20 @@
  * @LastEditTime: 2020-06-05 17:17:48
  * @Description: the code belongs to jiejie, please keep the author information and source code according to the license.
  */
+
+/* 
+ * Windows Winsock2 Header Guards
+ * Must be defined BEFORE any Windows headers to prevent winsock.h inclusion
+ */
+#if defined(_WIN32) || defined(_WIN64) || defined(__CYGWIN__)
+    #ifndef WIN32_LEAN_AND_MEAN
+    #define WIN32_LEAN_AND_MEAN
+    #endif
+    #ifndef _WINSOCKAPI_
+    #define _WINSOCKAPI_
+    #endif
+#endif
+
 #include "platform_timer.h"
 #include "platform_memory.h"
 #include "nettype_tcp.h"
