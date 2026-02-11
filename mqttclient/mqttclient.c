@@ -939,6 +939,8 @@ static int mqtt_yield(mqtt_client_t* c, int timeout_ms)
 
             if (MQTT_RECONNECT_TIMEOUT_ERROR == rc)
                 RETURN_ERROR(rc);
+            
+            mqtt_sleep_ms(100);  /* yield CPU to other threads while waiting for reconnection */
             continue;
         }
 
@@ -948,9 +950,11 @@ static int mqtt_yield(mqtt_client_t* c, int timeout_ms)
         if (rc >= 0) {
             /* scan ack list, destroy ack handler that have timed out or resend them */
             mqtt_ack_list_scan(c, 1);
+            mqtt_sleep_ms(10);  /* yield CPU briefly to allow other threads to run */
 
         } else if (MQTT_NOT_CONNECT_ERROR == rc) {
             MQTT_LOG_E("mqtt-client:%d %s() - mqtt not connect", __LINE__, __FUNCTION__);
+            mqtt_sleep_ms(100);  /* yield CPU on error condition */
         } else {
             break;
         }
