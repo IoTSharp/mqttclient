@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 3.10)
 project(mqttclient_example)
 
 set(EXAMPLE_DIRS "emqx" "onenet" "baidu" "ali")

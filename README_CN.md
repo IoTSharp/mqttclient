@@ -144,6 +144,12 @@ mqttclient 遵循 [Apache License v2.0](https://github.com/IoTSharp/mqttclient/b
 
 ## linux平台下测试使用
 
+### 环境要求
+
+- CMake 3.10 或更高版本
+- GCC 或兼容的 C 编译器
+- pthread 库
+
 ### 安装cmake：
 
 ```bash
@@ -196,7 +202,7 @@ mqttclient 遵循 [Apache License v2.0](https://github.com/IoTSharp/mqttclient/b
 ### 环境要求
 
 - Visual Studio 2013 或更新版本（推荐：Visual Studio 2019 或 2022）
-- CMake 2.8 或更新版本
+- CMake 3.10 或更新版本
 - Windows SDK（已包含在 Visual Studio 中）
 
 ### 使用 Visual Studio 编译

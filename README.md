@@ -133,6 +133,12 @@ mqttclient follows the [Apache License v2.0](https://github.com/IoTSharp/mqttcli
 
 ## Test and use under Linux platform
 
+### Requirements
+
+- CMake 3.10 or later
+- GCC or compatible C compiler
+- pthread library
+
 ### Install cmake:
 
 ```bash
@@ -185,7 +191,7 @@ If you need to uninstall **libmqttclient.so**, execute the following command:
 ### Requirements
 
 - Visual Studio 2013 or later (recommended: Visual Studio 2019 or 2022)
-- CMake 2.8 or later
+- CMake 3.10 or later
 - Windows SDK (included with Visual Studio)
 
 ### Compile with Visual Studio

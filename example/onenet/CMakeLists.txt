@@ -11,7 +11,7 @@
 # find_package("Threads")
 # target_link_libraries("onenet" ${CMAKE_THREAD_LIBS_INIT})
 
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 3.10)
 project(mqttclient_example)
 
 ##################
