@@ -135,9 +135,21 @@ cl.exe your_app.c mqttclient.lib ws2_32.lib
 After building, you can run the example programs:
 
 ```cmd
-cd build\bin
-emqx.exe
+cd build\bin\Release
+onenet_example.exe
 ```
+
+Note: Some example programs may have compilation issues unrelated to the Windows platform support.
+
+## Recent Fixes (February 2026)
+
+The following issues have been fixed to support Windows builds:
+
+1. **Compiler Flags**: CMake now uses MSVC-compatible flags (`/W3`, `/O2`) instead of GCC flags on Windows
+2. **Logging System**: Added Windows arch implementation for the salof logging system
+3. **Thread API**: Implemented Windows-native threading using CRITICAL_SECTION, Windows Semaphore, and CreateThread
+4. **Weak Functions**: Fixed `platform_timer_now()` weak function to work with MSVC using `/alternatename` linker directive
+5. **Platform Detection**: Automatically detect Windows platform and use SALOF_USING_WINDOWS configuration
 
 ## Troubleshooting
 
