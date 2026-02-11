@@ -111,11 +111,12 @@
 
 ## 支持的平台
 
-**目前已实现了Linux、TencentOS tiny、FreeRTOS、RT-Thread平台（已做成软件包，名字为`kawaii-mqtt`），除此之外TencentOS tiny的AT框架亦可以使用，并且稳定性极好！**
+**目前已实现了Linux、Windows、TencentOS tiny、FreeRTOS、RT-Thread平台（已做成软件包，名字为`kawaii-mqtt`），除此之外TencentOS tiny的AT框架亦可以使用，并且稳定性极好！**
 
 | 平台           | 代码位置 |
 | -------------- | -------- |
 | Linux          | [https://github.com/jiejieTop/mqttclient](https://github.com/jiejieTop/mqttclient) |
+| Windows        | [https://github.com/jiejieTop/mqttclient](https://github.com/jiejieTop/mqttclient) |
 | TencentOS tiny | [https://github.com/Tencent/TencentOS-tiny/tree/master/board/Fire_STM32F429](https://github.com/Tencent/TencentOS-tiny/tree/master/board/Fire_STM32F429) |
 | TencentOS tiny AT 框架 | [https://github.com/jiejieTop/gokit3-board-mqttclient](https://github.com/jiejieTop/gokit3-board-mqttclient) |
 | RT-Thread      | [https://github.com/jiejieTop/kawaii-mqtt](https://github.com/jiejieTop/kawaii-mqtt) |
@@ -189,6 +190,54 @@ mqttclient 遵循 [Apache License v2.0](https://github.com/jiejieTop/mqttclient/
 ```bash
     ./make-libmqttclient.sh remove
 ```
+
+## Windows平台下测试使用
+
+### 环境要求
+
+- Visual Studio 2013 或更新版本（推荐：Visual Studio 2019 或 2022）
+- CMake 2.8 或更新版本
+- Windows SDK（已包含在 Visual Studio 中）
+
+### 使用 Visual Studio 编译
+
+1. 打开 Visual Studio 命令提示符（Developer Command Prompt）
+
+2. 创建构建目录并生成项目文件：
+```cmd
+    mkdir build
+    cd build
+    cmake ..
+```
+
+3. 编译项目：
+```cmd
+    cmake --build . --config Release
+```
+
+4. 运行测试程序：
+```cmd
+    cd bin\Release
+    emqx.exe
+```
+
+### 使用 MinGW 编译
+
+1. 安装 MinGW 并确保其在系统 PATH 中
+
+2. 创建构建目录：
+```cmd
+    mkdir build
+    cd build
+```
+
+3. 生成 Makefile 并编译：
+```cmd
+    cmake -G "MinGW Makefiles" ..
+    mingw32-make
+```
+
+更多关于 Windows 平台支持的详细信息，请参见 [platform/windows/README.md](platform/windows/README.md)。
 
 ## 学习更多
 

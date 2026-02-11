@@ -18,12 +18,18 @@ typedef struct {
 static DWORD WINAPI thread_wrapper(LPVOID arg)
 {
     thread_wrapper_param_t *wrapper_param = (thread_wrapper_param_t *)arg;
+    void (*entry)(void *) = wrapper_param->entry;
+    void *param = wrapper_param->param;
+    HANDLE start_event = wrapper_param->start_event;
+    
+    // Free the wrapper parameter before starting the thread
+    platform_memory_free(wrapper_param);
     
     // Wait for start signal
-    WaitForSingleObject(wrapper_param->start_event, INFINITE);
+    WaitForSingleObject(start_event, INFINITE);
     
     // Call the actual thread function
-    wrapper_param->entry(wrapper_param->param);
+    entry(param);
     
     return 0;
 }

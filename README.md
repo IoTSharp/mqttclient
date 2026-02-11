@@ -101,11 +101,12 @@ Has a very clear layered framework.
 
 ## Supported platforms
 
-**At present, Linux, TencentOS tiny, FreeRTOS, RT-Thread platforms have been implemented (software package is named kawaii-mqtt`), in addition to TencentOS tiny AT framework can also be used, and the stability is excellent!**
+**At present, Linux, Windows, TencentOS tiny, FreeRTOS, RT-Thread platforms have been implemented (software package is named kawaii-mqtt`), in addition to TencentOS tiny AT framework can also be used, and the stability is excellent!**
 
 | Platform | Code Location |
 | -------------- | -------- |
 | Linux | [https://github.com/IoTSharp/mqttclient](https://github.com/jiejieTop/mqttclient) |
+| Windows | [https://github.com/IoTSharp/mqttclient](https://github.com/jiejieTop/mqttclient) |
 | TencentOS tiny | [https://github.com/Tencent/TencentOS-tiny/tree/master/board/Fire_STM32F429](https://github.com/Tencent/TencentOS-tiny/tree/master/board/Fire_STM32F429) |
 | TencentOS tiny AT framework | [https://github.com/jiejieTop/gokit3-board-mqttclient](https://github.com/jiejieTop/gokit3-board-mqttclient) |
 | RT-Thread | [https://github.com/jiejieTop/kawaii-mqtt](https://github.com/jiejieTop/kawaii-mqtt) |
@@ -178,6 +179,54 @@ If you need to uninstall **libmqttclient.so**, execute the following command:
 ```bash
     ./make-libmqttclient.sh remove
 ```
+
+## Test and use under Windows platform
+
+### Requirements
+
+- Visual Studio 2013 or later (recommended: Visual Studio 2019 or 2022)
+- CMake 2.8 or later
+- Windows SDK (included with Visual Studio)
+
+### Compile with Visual Studio
+
+1. Open Visual Studio Command Prompt (Developer Command Prompt)
+
+2. Create build directory and generate project files:
+```cmd
+    mkdir build
+    cd build
+    cmake ..
+```
+
+3. Build the project:
+```cmd
+    cmake --build . --config Release
+```
+
+4. Run the test programs:
+```cmd
+    cd bin\Release
+    emqx.exe
+```
+
+### Compile with MinGW
+
+1. Install MinGW and ensure it's in your PATH
+
+2. Create build directory:
+```cmd
+    mkdir build
+    cd build
+```
+
+3. Generate Makefiles and build:
+```cmd
+    cmake -G "MinGW Makefiles" ..
+    mingw32-make
+```
+
+For more details on Windows platform support, see [platform/windows/README.md](platform/windows/README.md).
 
 ## Learn more
 
