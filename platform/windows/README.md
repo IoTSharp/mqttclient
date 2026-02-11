@@ -178,6 +178,14 @@ The following issues have been fixed to support Windows builds:
    - Applied to all CMakeLists.txt files (common, platform, network, mbedtls, mqttclient)
 10. **Signed/Unsigned Warning**: Fixed comparison warning in `common/random.c`
     - Added explicit cast to eliminate signed/unsigned mismatch warning in loop comparison
+11. **Example Platform Support**: Fixed examples to work on Windows
+    - Added conditional includes for Windows (windows.h) vs Linux (unistd.h, pthread.h)
+    - Platform-specific compiler flags in example CMakeLists.txt
+    - Windows uses Sleep() and CreateThread(), Linux uses sleep() and pthread
+12. **SALOF Platform Constants**: Fixed definition order in `salof_defconfig.h`
+    - Platform constants (SALOF_USING_WINDOWS, etc.) now defined before including salof_config.h
+    - Ensures mqtt_config.h can use these constants when setting SALOF_OS
+    - Fixes examples failing to build due to pthread.h include on Windows
 
 ## Troubleshooting
 

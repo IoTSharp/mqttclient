@@ -8,15 +8,19 @@
 #ifndef _SALOF_DEFCONFIG_H_
 #define _SALOF_DEFCONFIG_H_
 
-#include "salof_config.h"
-
-#ifdef SALOF_USING_LOG
-
+/* 
+ * Define platform constants BEFORE including salof_config.h
+ * so they're available when mqtt_config.h needs them
+ */
 #define         SALOF_USING_RTT             1
 #define         SALOF_USING_FREERTOS        2
 #define         SALOF_USING_TENCENTOS       3
 #define         SALOF_USING_LINUX           4
 #define         SALOF_USING_WINDOWS         5
+
+#include "salof_config.h"
+
+#ifdef SALOF_USING_LOG
 
 #define         SALOF_BASE_LEVEL          (0)
 #define         SALOF_ERR_LEVEL           (SALOF_BASE_LEVEL + 1)
