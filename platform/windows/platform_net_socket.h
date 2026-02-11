@@ -31,6 +31,7 @@ int platform_net_socket_close(int fd);
 int platform_net_socket_set_block(int fd);
 int platform_net_socket_set_nonblock(int fd);
 int platform_net_socket_setsockopt(int fd, int level, int optname, const void *optval, socklen_t optlen);
+void platform_net_socket_cleanup(void);
 
 #ifdef __cplusplus
 }

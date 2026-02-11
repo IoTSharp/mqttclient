@@ -64,7 +64,7 @@ void platform_timer_usleep(unsigned long usec)
     target_ticks = (LONGLONG)usec * frequency.QuadPart / 1000000;
     
     // For very short sleeps, use busy wait for accuracy
-    if (usec < 1000) {
+    if (usec < 100) {
         do {
             QueryPerformanceCounter(&now);
         } while ((now.QuadPart - start.QuadPart) < target_ticks);

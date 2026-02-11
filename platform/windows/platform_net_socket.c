@@ -9,17 +9,18 @@
 #include "mqtt_error.h"
 
 // Initialize Winsock - this should be called once at program startup
-static int winsock_initialized = 0;
+static volatile LONG winsock_initialized = 0;
 
 static int platform_net_socket_init(void)
 {
-    if (!winsock_initialized) {
+    // Thread-safe initialization using InterlockedCompareExchange
+    if (InterlockedCompareExchange(&winsock_initialized, 1, 0) == 0) {
         WSADATA wsaData;
         int result = WSAStartup(MAKEWORD(2, 2), &wsaData);
         if (result != 0) {
+            InterlockedExchange(&winsock_initialized, 0);
             return -1;
         }
-        winsock_initialized = 1;
     }
     return 0;
 }
@@ -159,4 +160,11 @@ int platform_net_socket_set_nonblock(int fd)
 int platform_net_socket_setsockopt(int fd, int level, int optname, const void *optval, socklen_t optlen)
 {
     return setsockopt((SOCKET)fd, level, optname, (const char *)optval, optlen);
+}
+
+void platform_net_socket_cleanup(void)
+{
+    if (InterlockedCompareExchange(&winsock_initialized, 0, 1) == 1) {
+        WSACleanup();
+    }
 }

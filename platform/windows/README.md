@@ -15,7 +15,7 @@ The Windows platform implementation provides the necessary abstractions for:
 
 - Windows Vista or later (Windows 7, 8, 10, 11, Server 2008+)
 - Visual Studio 2013 or later (recommended: Visual Studio 2019 or 2022)
-- CMake 2.8 or later
+- CMake 3.10 or later
 - Windows SDK (included with Visual Studio)
 
 ## Building on Windows
@@ -113,11 +113,22 @@ cl.exe your_app.c mqttclient.lib ws2_32.lib
 
 1. **Winsock Initialization**: The network socket implementation automatically initializes Winsock when needed. No manual initialization is required by the application.
 
-2. **Thread Priority**: The Windows implementation currently ignores the `priority` parameter in `platform_thread_init()`. Windows thread priorities can be set separately if needed using `SetThreadPriority()`.
+2. **Winsock Cleanup**: For proper resource cleanup, call `platform_net_socket_cleanup()` at program exit. Example:
+   ```c
+   #include "platform_net_socket.h"
+   
+   int main() {
+       // Your application code here
+       
+       // Clean up before exit
+       platform_net_socket_cleanup();
+       return 0;
+   }
+   ```
+   
+3. **Thread Priority**: The Windows implementation currently ignores the `priority` parameter in `platform_thread_init()`. Windows thread priorities can be set separately if needed using `SetThreadPriority()`.
 
-3. **Stack Size**: Thread stack size is respected in the Windows implementation. Default is 0, which uses the system default (typically 1MB).
-
-4. **Cleanup**: Winsock cleanup (`WSACleanup()`) is not automatically called. For proper cleanup in production applications, consider adding cleanup code at program exit.
+4. **Stack Size**: Thread stack size is respected in the Windows implementation. Default is 0, which uses the system default (typically 1MB).
 
 ## Testing
 
