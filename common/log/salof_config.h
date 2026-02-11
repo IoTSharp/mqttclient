@@ -9,6 +9,16 @@
 #ifndef _SALOF_CONFIG_H_
 #define _SALOF_CONFIG_H_
 
+/* 
+ * Platform constants MUST be defined FIRST before any code uses them
+ * 平台常量必须首先定义，在任何代码使用它们之前
+ */
+#define         SALOF_USING_RTT             1
+#define         SALOF_USING_FREERTOS        2
+#define         SALOF_USING_TENCENTOS       3
+#define         SALOF_USING_LINUX           4
+#define         SALOF_USING_WINDOWS         5
+
 /*
  * 编译时自动平台检测 (Automatic platform detection at compile time)
  * 
