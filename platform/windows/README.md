@@ -188,6 +188,13 @@ The following issues have been fixed to support Windows builds:
     - Added fallback platform detection for when SALOF_OS isn't defined by config
     - Fallback detects Windows via _WIN32, _WIN64, __CYGWIN__, or _MSC_VER macros
     - Fixes examples failing to build due to pthread.h include on Windows
+13. **Automatic Platform Detection in common/log**: Enhanced logging system with independent platform detection
+    - `salof_config.h` now automatically detects platform at compile time
+    - Supports Windows, Linux, macOS, FreeRTOS, RT-Thread, TencentOS
+    - No manual SALOF_OS configuration needed - platform is detected automatically
+    - Detection uses compiler-defined macros (_WIN32, __linux__, etc.)
+    - Works independently of MQTT configuration
+    - See `common/log/README.md` for detailed documentation
 
 ## Troubleshooting
 
