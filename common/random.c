@@ -65,7 +65,7 @@ int random_string(char *buffer, int len)
     
     random = (unsigned int)do_random(seed);
     
-	for (i = 0; i < len; i++) {
+	for (i = 0; i < (unsigned int)len; i++) {
         random = do_random(seed ^ random);
 		flag = (unsigned int)random % 3;
 		switch (flag) {

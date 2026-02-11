@@ -29,7 +29,12 @@ endforeach()
 
 foreach(lib ${DEPEND_LIBRARY_INTERNAL})
     list(APPEND DEPEND_LIBRARY ${LIBRARY_PREFIX}-${lib})
-    list(APPEND DEPEND_LIBRARY_STATIC lib${LIBRARY_PREFIX}-${lib}.a)
+    # Use platform-specific static library extension
+    if(WIN32)
+        list(APPEND DEPEND_LIBRARY_STATIC ${LIBRARY_PREFIX}-${lib}.lib)
+    else()
+        list(APPEND DEPEND_LIBRARY_STATIC lib${LIBRARY_PREFIX}-${lib}.a)
+    endif()
 endforeach()
 
 # 生成动态库

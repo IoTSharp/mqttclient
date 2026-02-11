@@ -171,6 +171,13 @@ The following issues have been fixed to support Windows builds:
    - `common/log/CMakeLists.txt` now selects Windows or Linux arch directory based on platform
    - Prevents compilation of Linux pthread code on Windows
    - Eliminates `pthread_t`, `pthread_mutex_t`, `sem_t` undeclared identifier errors
+9. **Static Library Linking**: Fixed CMakeLists.txt files to use platform-specific extensions
+   - Windows: `.lib` extension for static libraries
+   - Linux: `.a` extension for static libraries
+   - Eliminates linker errors "cannot open input file mc-log.lib"
+   - Applied to all CMakeLists.txt files (common, platform, network, mbedtls, mqttclient)
+10. **Signed/Unsigned Warning**: Fixed comparison warning in `common/random.c`
+    - Added explicit cast to eliminate signed/unsigned mismatch warning in loop comparison
 
 ## Troubleshooting
 
