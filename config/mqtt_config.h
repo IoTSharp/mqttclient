@@ -16,11 +16,15 @@
     #define         SALOF_USING_SALOF                   (1U)
     #define         SALOF_LOG_LEVEL                     MQTT_LOG_LEVEL
     
-    // Auto-detect platform
-    #if defined(_WIN32) || defined(_WIN64) || defined(__CYGWIN__)
-        #define     SALOF_OS                            SALOF_USING_WINDOWS
-    #else
-        #define     SALOF_OS                            SALOF_USING_LINUX
+    // Only define SALOF_OS if not already defined by salof_config.h
+    // salof_config.h has comprehensive platform detection that should be used first
+    #ifndef SALOF_OS
+        // Fallback platform detection if salof_config.h didn't define it
+        #if defined(_WIN32) || defined(_WIN64) || defined(__CYGWIN__)
+            #define     SALOF_OS                            SALOF_USING_WINDOWS
+        #else
+            #define     SALOF_OS                            SALOF_USING_LINUX
+        #endif
     #endif
     
     #define         SALOF_USING_IDLE_HOOK               (0U)
