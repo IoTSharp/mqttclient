@@ -1456,7 +1456,7 @@ int mqtt_publish(mqtt_client_t* c, const char* topic_filter, mqtt_message_t* msg
         msg->payloadlen = strlen((char*)msg->payload);
 
     if (msg->payloadlen > c->mqtt_write_buf_size) {
-        MQTT_LOG_E("publish payload len is is greater than client write buffer");
+        MQTT_LOG_E("publish payload len is greater than client write buffer");
         RETURN_ERROR(MQTT_BUFFER_TOO_SHORT_ERROR);
     }
 
